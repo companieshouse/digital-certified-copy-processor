@@ -1,0 +1,5 @@
+app_name: digital-certified-copy-processor
+group: api
+weight: 914
+routes:
+  1: ^/digital-certified-copy-processor/healthcheck
