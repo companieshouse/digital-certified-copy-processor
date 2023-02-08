@@ -9,7 +9,7 @@ if [[ -z "${MESOS_SLAVE_PID}" ]]; then
     source ~/.chs_env/global_env
     source ~/.chs_env/digital-certified-copy-processor/env
 
-    PORT="${DIGITAL_CERTIFIED_COPY_PROCESSOR_API_PORT}"
+    PORT="${DIGITAL_CERTIFIED_COPY_PROCESSOR_PORT}"
 else
     PORT="$1"
     CONFIG_URL="$2"
