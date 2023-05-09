@@ -23,6 +23,8 @@
         <spring-boot-dependencies.version>2.7.8</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>2.5.5</spring-boot-maven-plugin.version>
 
+        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+
         <!-- Docker plugin -->
         <jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
 
@@ -34,6 +36,15 @@
 
         <!-- Structured logging -->
         <structured-logging.version>1.9.16</structured-logging.version>
+
+        <api-sdk-java.version>4.3.28</api-sdk-java.version>
+        <api-sdk-manager-java-library.version>1.0.6</api-sdk-manager-java-library.version>
+
+        <spring-cloud-contract-wiremock.version>2.2.2.RELEASE</spring-cloud-contract-wiremock.version>
+        <!-- system-rules: 1.17.2 is the latest version that works with JUnit 5.
+             See https://github.com/stefanbirkner/system-rules/issues/70 -->
+        <system-rules.version>1.17.2</system-rules.version>
+        <mockito-core.version>5.3.1</mockito-core.version>
     </properties>
 
     <dependencyManagement>
@@ -66,10 +77,38 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-manager-java-library</artifactId>
+            <version>${api-sdk-manager-java-library.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-java</artifactId>
+            <version>${api-sdk-java.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>${system-rules.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-wiremock</artifactId>
+            <version>${spring-cloud-contract-wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -109,6 +148,11 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
