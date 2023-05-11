@@ -2,11 +2,15 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.logging.Logger;
+
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -23,7 +27,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
 class GetDocumentMetadataFromTilt {
 
     @Rule
-    public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
+    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
@@ -35,12 +39,21 @@ class GetDocumentMetadataFromTilt {
     @Autowired
     private Logger logger;
 
+    @AfterEach
+    void tearDown() {
+        final String[] AllEnvironmentVariableNames =
+                Arrays.stream(EnvironmentVariablesChecker.RequiredEnvironmentVariables.class.getEnumConstants())
+                        .map(Enum::name)
+                        .toArray(String[]::new);
+        environmentVariables.clear(AllEnvironmentVariableNames);
+    }
+
     @Test
     @DisplayName("get filing history document metadata from Tilt")
     void getDocumentMetadataFromTilt() {
 
         // Given
-        givenSdkIsConfiguredForTilt(ENVIRONMENT_VARIABLES);
+        givenSdkIsConfiguredForTilt(environmentVariables);
 
         // When
         final String metadata =

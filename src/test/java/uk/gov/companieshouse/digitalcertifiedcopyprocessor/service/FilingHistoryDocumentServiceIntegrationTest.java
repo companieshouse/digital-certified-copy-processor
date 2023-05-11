@@ -9,6 +9,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,13 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Error;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+
+import java.util.Arrays;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -52,7 +56,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
 class FilingHistoryDocumentServiceIntegrationTest {
 
     @Rule
-    public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
+    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
@@ -92,13 +96,21 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @Autowired
     private Environment environment;
 
+    @AfterEach
+    void tearDown() {
+        final String[] AllEnvironmentVariableNames =
+                Arrays.stream(EnvironmentVariablesChecker.RequiredEnvironmentVariables.class.getEnumConstants())
+                        .map(Enum::name)
+                        .toArray(String[]::new);
+        environmentVariables.clear(AllEnvironmentVariableNames);
+    }
 
     @Test
     @DisplayName("getDocumentMetadata() gets the expected filing history document metadata successfully")
     void getDocumentMetadataGetsMetadataSuccessfully() throws JsonProcessingException {
 
         // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
+        givenSdkIsConfigured(environment, environmentVariables);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
@@ -117,7 +129,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
     void getDocumentMetadataThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
 
         // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
+        givenSdkIsConfigured(environment, environmentVariables);
         givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -138,7 +150,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
     void getDocumentMetadataThrowsBadRequestForUnknownFilingHistoryDocument() throws JsonProcessingException {
 
         // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
+        givenSdkIsConfigured(environment, environmentVariables);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + UNKNOWN_ID))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -158,7 +170,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
     void getDocumentMetadataThrowsInternalServerErrorForForConnectionFailure() {
 
         // Given
-        final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
+        final String wireMockPort = givenSdkIsConfigured(environment, environmentVariables);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
