@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
+import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
@@ -45,7 +46,7 @@ public class FilingHistoryDocumentService {
             final String filingHistoryDocumentId) {
         logger.info("Getting filing history document " + filingHistoryDocumentId + " for company number "
                 + companyNumber + ".", getLogMap(companyNumber, filingHistoryDocumentId));
-        final ApiClient apiClient = apiClientService.getInternalApiClient();
+        final ApiClient apiClient = getInternalApiClient();
         final String uri = GET_FILING_HISTORY_DOCUMENT.expand(companyNumber, filingHistoryDocumentId).toString();
         try {
             final FilingApi filing = apiClient.filing().get(uri).execute().getData();
@@ -92,6 +93,15 @@ public class FilingHistoryDocumentService {
             propagatedException =  new ResponseStatusException(BAD_REQUEST, error);
         }
         return propagatedException;
+    }
+
+    private InternalApiClient getInternalApiClient() {
+        try {
+            return apiClientService.getInternalApiClient();
+        } catch (RuntimeException re) {
+            logger.error("Caught RuntimeException getting API client: " + re.getMessage());
+            throw re;
+        }
     }
 
     private Map<String, Object> getLogMap(final String companyNumber, final String filingHistoryDocumentId) {
