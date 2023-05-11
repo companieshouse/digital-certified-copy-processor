@@ -35,7 +35,7 @@
         <log4j.version>2.19.0</log4j.version>
 
         <!-- Structured logging -->
-        <structured-logging.version>1.9.16</structured-logging.version>
+        <structured-logging.version>1.9.20</structured-logging.version>
 
         <api-sdk-java.version>4.3.28</api-sdk-java.version>
         <api-sdk-manager-java-library.version>1.0.6</api-sdk-manager-java-library.version>
