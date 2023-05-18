@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
-import org.junit.Rule;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +33,16 @@ import static software.amazon.awssdk.core.SdkSystemSetting.AWS_SECRET_ACCESS_KEY
 import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 /**
- *  "Test" class re-purposed to execute {@link DocumentService#getPrivateUri(String)}
+ *  "Test" class re-purposed to execute {@link RestTemplateDocumentService#getPrivateUri(String)}
  *  to get a private URl for a document in Cidev, and then verify that the URI can
  *  be used to download the document. This is NOT to be run as part of an automated
  *  test suite. It is for manual testing only.
+ * @Deprecated Use {@link GetDocumentApiPdfFromCidev}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes= {ApplicationConfiguration.class, GetDocumentApiPdfFromCidev.Config.class})
+@SpringJUnitConfig(classes= {ApplicationConfiguration.class, RestTemplateGetDocumentApiPdfFromCidev.Config.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
-class GetDocumentApiPdfFromCidev {
+class RestTemplateGetDocumentApiPdfFromCidev {
 
     private static final String DOCUMENT_METADATA = "/document/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0";
 
@@ -65,20 +64,20 @@ class GetDocumentApiPdfFromCidev {
     private static final String AWS_REGION_VALUE = "eu-west-2";
 
     @Autowired
-    private DocumentService serviceUnderTest;
+    private RestTemplateDocumentService serviceUnderTest;
 
     @Autowired
     private Logger logger;
 
     @Autowired
-    private S3Client s3Client;
+    private S3Client restTemplates3Client;
 
     @Configuration
-    @ComponentScan(basePackageClasses = GetDocumentApiPdfFromCidev.class)
+    @ComponentScan(basePackageClasses = RestTemplateGetDocumentApiPdfFromCidev.class)
     static class Config {
 
         @Bean
-        public S3Client s3Client() {
+        public S3Client restTemplates3Client() {
             final var stsClient = StsClient.builder()
                     .region(Region.of(AWS_REGION_VALUE))
                     .build();
@@ -94,13 +93,10 @@ class GetDocumentApiPdfFromCidev {
 
     }
 
-    @Rule
-    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
-
     /**
      * Required environment variables:
      * <ul>
-     *     <li><code>CHS_API_KEY</code></li>
+     *     <li><code>BASIC_AUTH_CREDENTIALS</code></li>
      *     <li><code>AWS_ACCESS_KEY_ID</code></li>
      *     <li><code>AWS_SECRET_ACCESS_KEY</code></li>
      * </ul>
@@ -110,7 +106,7 @@ class GetDocumentApiPdfFromCidev {
     void getDocumentPdfFromCidev() throws URISyntaxException, IOException {
 
         // Given
-        givenSdkIsConfiguredForTilt(environmentVariables);
+        givenBasicAuthIsConfigured();
         givenS3BucketAccessIsConfigured();
 
         // When
@@ -125,7 +121,7 @@ class GetDocumentApiPdfFromCidev {
     /**
      * Required environment variables:
      * <ul>
-     *     <li><code>CHS_API_KEY<</code></li>
+     *     <li><code>BASIC_AUTH_CREDENTIALS</code></li>
      * </ul>
      */
     @Test
@@ -133,7 +129,7 @@ class GetDocumentApiPdfFromCidev {
     void getPrivateUriFromCidev() throws URISyntaxException {
 
         // Given
-        givenSdkIsConfiguredForTilt(environmentVariables);
+        givenBasicAuthIsConfigured();
 
         // When
         final URI privateUri =
@@ -148,7 +144,7 @@ class GetDocumentApiPdfFromCidev {
     /**
      * Required environment variables:
      * <ul>
-     *     <li><code>CHS_API_KEY</code></li>
+     *     <li><code>BASIC_AUTH_CREDENTIALS</code></li>
      * </ul>
      */
     @Test
@@ -156,7 +152,7 @@ class GetDocumentApiPdfFromCidev {
     void getPublicUriFromCidev() {
 
         // Given
-        givenSdkIsConfiguredForTilt(environmentVariables);
+        givenBasicAuthIsConfigured();
 
         // When
         final URI publicUri =
@@ -174,6 +170,11 @@ class GetDocumentApiPdfFromCidev {
         assertThat(getenv(AWS_SECRET_ACCESS_KEY.environmentVariable()), not(is(emptyOrNullString())));
     }
 
+    private static void givenBasicAuthIsConfigured() {
+        // TODO DCAC-71 Constants, required env vars etc
+        assertThat(getenv("BASIC_AUTH_CREDENTIALS"), not(is(emptyOrNullString())));
+    }
+
     private ResponseInputStream<GetObjectResponse> getInputStream(final URI privateUri) {
         final var bucketName =  privateUri.getHost();
         final var key = privateUri.getPath().substring(1); // remove leading /
@@ -181,18 +182,7 @@ class GetDocumentApiPdfFromCidev {
                 .bucket(bucketName)
                 .key(key)
                 .build();
-        return s3Client.getObject(getObjectRequest);
-    }
-
-    /**
-     * Configures the CH Java SDKs used in manual tests to interact with Tilt
-     * or other development hosted API endpoints.
-     * @param variables {@link EnvironmentVariables} class rule permitting environment variable manipulation
-     */
-    public static void givenSdkIsConfiguredForTilt(final EnvironmentVariables variables) {
-        assertThat(getenv("CHS_API_KEY"), not(is(emptyOrNullString())));
-        variables.set("API_URL", "http://api.chs.local:4001");
-        variables.set("PAYMENTS_API_URL", "http://api.chs.local:4001");
+        return restTemplates3Client.getObject(getObjectRequest);
     }
 
 }
