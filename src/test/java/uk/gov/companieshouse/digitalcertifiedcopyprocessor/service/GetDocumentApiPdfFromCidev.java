@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.File;
@@ -41,7 +42,7 @@ import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
  *  test suite. It is for manual testing only.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes= {ApplicationConfiguration.class, GetDocumentApiPdfFromCidev.Config.class})
+@SpringJUnitConfig(classes={ApplicationConfiguration.class, GetDocumentApiPdfFromCidev.Config.class, TestConfig.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class GetDocumentApiPdfFromCidev {
 

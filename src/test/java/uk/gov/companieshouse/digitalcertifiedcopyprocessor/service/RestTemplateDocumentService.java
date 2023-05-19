@@ -18,7 +18,7 @@ import java.util.Collections;
 import static java.lang.System.getenv;
 
 /**
- * @Deprecated Use {@link DocumentService}.
+ * @deprecated Use {@link DocumentService}.
  */
 @Service
 public class RestTemplateDocumentService {

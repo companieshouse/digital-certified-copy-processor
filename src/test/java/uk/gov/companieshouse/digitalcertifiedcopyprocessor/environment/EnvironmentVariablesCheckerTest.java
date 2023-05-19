@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 
 import java.util.Arrays;
 
@@ -18,6 +20,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.En
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
 
 @SpringBootTest
+@SpringJUnitConfig(TestConfig.class)
 class EnvironmentVariablesCheckerTest {
 
     private static final String TOKEN_VALUE = "token value";

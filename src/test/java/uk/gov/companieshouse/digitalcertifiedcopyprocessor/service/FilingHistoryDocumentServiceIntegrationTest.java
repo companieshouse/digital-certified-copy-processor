@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
@@ -51,7 +51,10 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  * Integration tests the {@link FilingHistoryDocumentService}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes= {ApplicationConfiguration.class, FilingHistoryDocumentServiceIntegrationTest.Config.class})
+@SpringJUnitConfig(classes={
+        ApplicationConfiguration.class,
+        FilingHistoryDocumentServiceIntegrationTest.Config.class,
+        TestConfig.class})
 @AutoConfigureWireMock(port = 0)
 class FilingHistoryDocumentServiceIntegrationTest {
 
@@ -79,11 +82,6 @@ class FilingHistoryDocumentServiceIntegrationTest {
                     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                     .setPropertyNamingStrategy(SNAKE_CASE)
                     .findAndRegisterModules();
-        }
-
-        @Bean
-        public RestTemplateBuilder getRestTemplateBuilder() {
-            return new RestTemplateBuilder();
         }
 
         @Bean

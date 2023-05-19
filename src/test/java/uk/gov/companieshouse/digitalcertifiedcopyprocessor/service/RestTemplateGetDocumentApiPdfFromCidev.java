@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.File;
@@ -37,10 +38,13 @@ import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
  *  to get a private URl for a document in Cidev, and then verify that the URI can
  *  be used to download the document. This is NOT to be run as part of an automated
  *  test suite. It is for manual testing only.
- * @Deprecated Use {@link GetDocumentApiPdfFromCidev}.
+ * @deprecated Use {@link GetDocumentApiPdfFromCidev}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes= {ApplicationConfiguration.class, RestTemplateGetDocumentApiPdfFromCidev.Config.class})
+@SpringJUnitConfig(classes={
+        ApplicationConfiguration.class,
+        RestTemplateGetDocumentApiPdfFromCidev.Config.class,
+        TestConfig.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class RestTemplateGetDocumentApiPdfFromCidev {
 
@@ -171,7 +175,6 @@ class RestTemplateGetDocumentApiPdfFromCidev {
     }
 
     private static void givenBasicAuthIsConfigured() {
-        // TODO DCAC-71 Constants, required env vars etc
         assertThat(getenv("BASIC_AUTH_CREDENTIALS"), not(is(emptyOrNullString())));
     }
 
