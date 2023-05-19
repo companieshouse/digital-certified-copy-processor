@@ -42,7 +42,7 @@ public class DocumentService {
         final String uri = GET_SHORT_LIVED_DOCUMENT_URL.expand(documentMetadata).toString();
         final ApiClient apiClient = getApiClient();
         try {
-             final var headers = apiClient.privateDocumentResourceHandler().getDocument(uri).execute().getHeaders();
+             final var headers = apiClient.document().getDocument(uri).execute().getHeaders();
             // TODO DCAC-71 Error handling
             final var locations = (List<String>) headers.get(HttpHeaders.LOCATION.toLowerCase());
             return new URI(locations.get(0));
