@@ -39,8 +39,6 @@
 
         <!-- TODO DCAC-71 > 4.3.28 -->
         <api-sdk-java.version>unversioned</api-sdk-java.version>
-        <!-- TODO DCAC-71 > 2.0.254 -->
-        <private-api-sdk-java.version>unversioned</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>1.0.6</api-sdk-manager-java-library.version>
 
         <spring-cloud-contract-wiremock.version>2.2.2.RELEASE</spring-cloud-contract-wiremock.version>
@@ -88,11 +86,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>private-api-sdk-java</artifactId>
-            <version>${private-api-sdk-java.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>

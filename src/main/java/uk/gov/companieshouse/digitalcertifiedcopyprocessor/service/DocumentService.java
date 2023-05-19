@@ -4,7 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriTemplate;
-import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
@@ -40,7 +40,7 @@ public class DocumentService {
 
     public URI getPublicUri(final String documentMetadata) {
         final String uri = GET_SHORT_LIVED_DOCUMENT_URL.expand(documentMetadata).toString();
-        final InternalApiClient apiClient = getInternalApiClient();
+        final ApiClient apiClient = getApiClient();
         try {
              final var headers = apiClient.privateDocumentResourceHandler().getDocument(uri).execute().getHeaders();
             // TODO DCAC-71 Error handling
@@ -61,9 +61,9 @@ public class DocumentService {
         }
     }
 
-    private InternalApiClient getInternalApiClient() {
+    private ApiClient getApiClient() {
         try {
-            return apiClientService.getInternalApiClient();
+            return apiClientService.getApiClient();
         } catch (RuntimeException re) {
             logger.error("Caught RuntimeException getting API client: " + re.getMessage());
             throw re;
