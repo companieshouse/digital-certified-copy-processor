@@ -37,9 +37,8 @@
         <!-- Structured logging -->
         <structured-logging.version>1.9.20</structured-logging.version>
 
-        <!-- TODO DCAC-71 > 4.3.28 -->
-        <api-sdk-java.version>unversioned</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>1.0.6</api-sdk-manager-java-library.version>
+        <!-- TODO DCAC-71 > 1.0.6 -->
+        <api-sdk-manager-java-library.version>unversioned</api-sdk-manager-java-library.version>
 
         <spring-cloud-contract-wiremock.version>2.2.2.RELEASE</spring-cloud-contract-wiremock.version>
         <!-- system-rules: 1.17.2 is the latest version that works with JUnit 5.
@@ -91,11 +90,6 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>api-sdk-java</artifactId>
-            <version>${api-sdk-java.version}</version>
         </dependency>
 
         <dependency>

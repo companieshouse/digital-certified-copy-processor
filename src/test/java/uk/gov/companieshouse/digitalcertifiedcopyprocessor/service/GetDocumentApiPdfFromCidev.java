@@ -194,6 +194,7 @@ class GetDocumentApiPdfFromCidev {
         assertThat(getenv("CHS_API_KEY"), not(is(emptyOrNullString())));
         variables.set("API_URL", "http://api.chs.local:4001");
         variables.set("PAYMENTS_API_URL", "http://api.chs.local:4001");
+        variables.set("DOCUMENT_API_LOCAL_URL", "http://document-api-cidev.aws.chdev.org");
     }
 
 }
