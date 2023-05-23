@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.API_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CHS_API_KEY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.DOCUMENT_API_LOCAL_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
 
 @SpringBootTest
@@ -53,7 +54,7 @@ class EnvironmentVariablesCheckerTest {
 
     @DisplayName("returns false if PAYMENTS_API_URL is missing")
     @Test
-    void checkEnvironmentVariablesAllPresentReturnsFalseIfPaymentsApiUrlIdMissing() {
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfPaymentsApiUrlMissing() {
         populateAllVariablesExceptOneAndAssertSomethingMissing(PAYMENTS_API_URL);
     }
 
@@ -61,6 +62,12 @@ class EnvironmentVariablesCheckerTest {
     @Test
     void checkEnvironmentVariablesAllPresentReturnsFalseIfChsApiKeyMissing() {
         populateAllVariablesExceptOneAndAssertSomethingMissing(CHS_API_KEY);
+    }
+
+    @DisplayName("returns false if DOCUMENT_API_LOCAL_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfDocumentApiLocalUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(DOCUMENT_API_LOCAL_URL);
     }
 
     private void populateAllVariablesExceptOneAndAssertSomethingMissing(

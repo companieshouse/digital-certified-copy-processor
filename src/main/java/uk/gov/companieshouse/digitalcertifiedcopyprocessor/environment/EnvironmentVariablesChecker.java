@@ -15,7 +15,8 @@ public class EnvironmentVariablesChecker {
     public enum RequiredEnvironmentVariables {
         API_URL("API_URL"),
         PAYMENTS_API_URL("PAYMENTS_API_URL"),
-        CHS_API_KEY("CHS_API_KEY");
+        CHS_API_KEY("CHS_API_KEY"),
+        DOCUMENT_API_LOCAL_URL("DOCUMENT_API_LOCAL_URL");
 
         private final String name;
 
