@@ -7,6 +7,7 @@ import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.logging.Logger;
 
@@ -15,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.MOVED_TEMPORARILY;
 
 @Service
 public class DocumentService {
@@ -40,17 +42,20 @@ public class DocumentService {
 
     public URI getPublicUri(final String documentMetadata) {
         final String uri = GET_SHORT_LIVED_DOCUMENT_URL.expand(documentMetadata).toString();
-        final ApiClient apiClient = getApiClient();
         try {
-             final var headers = apiClient.document().getDocument(uri).execute().getHeaders();
+            final ApiResponse<Void> response = getDocumentContent(uri);
+            final var headers = response.getHeaders();
             // TODO DCAC-71 Error handling
             final var locations = (List<String>) headers.get(HttpHeaders.LOCATION.toLowerCase());
             return new URI(locations.get(0));
         } catch (ApiErrorResponseException ex) {
-            // TODO DCAC-71 Structured logging, error handling
+            final String error = "Caught ApiErrorResponseException with status " +
+                    ex.getStatusCode() + ", and message '" + ex.getMessage() +
+                    "' getting public URI using document content request " + uri + ".";
+            // TODO DCAC-71 Structured logging
             // throw getResponseStatusException(ex, apiClient, companyNumber, filingHistoryDocumentId, uri);
-            logger.error("Caught ApiErrorResponseException getting public URI.", ex);
-            throw new RuntimeException(ex);
+            logger.error(error, ex);
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         } catch (URIValidationException | URISyntaxException ex) {
             // Should this happen (unlikely), it is a broken contract, hence 500.
             final String error = "Invalid URI " + uri + " to get document public URI.";
@@ -59,6 +64,21 @@ public class DocumentService {
             logger.error(error, ex);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
+    }
+
+    private ApiResponse<Void> getDocumentContent(final String uri)
+            throws ApiErrorResponseException, URIValidationException {
+        final ApiResponse<Void> response = getApiClient().document().getDocument(uri).execute();
+        if (response.getStatusCode() != MOVED_TEMPORARILY.value()) {
+            // TODO DCAC-71 Structured logging
+            final String error = "Received unexpected response status code " +
+                    response.getStatusCode() +
+                    " getting public URI using document content request " +
+                    uri + ".";
+            logger.error(error);
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+        }
+        return response;
     }
 
     private ApiClient getApiClient() {
