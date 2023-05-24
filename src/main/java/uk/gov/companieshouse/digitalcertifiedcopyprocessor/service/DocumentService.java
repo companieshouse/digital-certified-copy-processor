@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.MOVED_TEMPORARILY;
+import static org.springframework.http.HttpStatus.FOUND;
 
 @Service
 public class DocumentService {
@@ -69,7 +69,7 @@ public class DocumentService {
     private ApiResponse<Void> getDocumentContent(final String uri)
             throws ApiErrorResponseException, URIValidationException {
         final ApiResponse<Void> response = getApiClient().document().getDocument(uri).execute();
-        if (response.getStatusCode() != MOVED_TEMPORARILY.value()) {
+        if (response.getStatusCode() != FOUND.value()) {
             // TODO DCAC-71 Structured logging
             final String error = "Received unexpected response status code " +
                     response.getStatusCode() +
