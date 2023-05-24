@@ -24,12 +24,13 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Error;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -44,6 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.NAMESPACE;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils.givenSdkIsConfigured;
 
 
@@ -51,10 +53,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  * Integration tests the {@link FilingHistoryDocumentService}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes={
-        ApplicationConfiguration.class,
-        FilingHistoryDocumentServiceIntegrationTest.Config.class,
-        TestConfig.class})
+@SpringJUnitConfig(classes={FilingHistoryDocumentServiceIntegrationTest.Config.class, TestConfig.class})
 @AutoConfigureWireMock(port = 0)
 class FilingHistoryDocumentServiceIntegrationTest {
 
@@ -86,7 +85,12 @@ class FilingHistoryDocumentServiceIntegrationTest {
 
         @Bean
         public PublicToPrivateUriConverter getPublicToPrivateUriConverter() {
-            return new PublicToPrivateUriConverter();
+            return new PublicToPrivateUriConverter(getLogger());
+        }
+
+        @Bean
+        Logger getLogger() {
+            return LoggerFactory.getLogger(NAMESPACE);
         }
     }
 

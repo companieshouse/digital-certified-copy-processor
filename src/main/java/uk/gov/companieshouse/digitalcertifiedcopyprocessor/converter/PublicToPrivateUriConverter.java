@@ -1,21 +1,57 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.UriConversionException;
+import uk.gov.companieshouse.logging.Logger;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class PublicToPrivateUriConverter {
 
+    private final Logger logger;
+
+    private static final Pattern PUBLIC_URI_PATTERN =
+            Pattern.compile("^https:\\/\\/.*\\.s3\\.eu-west-2\\.amazonaws\\.com\\/(.*?pdf)");
     private static final String S3_SCHEME_PREFIX = "s3://";
 
-    public URI convertToPrivateUri(final URI publicUri) throws URISyntaxException {
-        // TODO DCAC-71 Error handling
-        final var hostName = publicUri.getHost().split("\\.")[0];
-        final var documentKey = publicUri.getPath();
-        final var bucketUri = S3_SCHEME_PREFIX + hostName;
+    public PublicToPrivateUriConverter(Logger logger) {
+        this.logger = logger;
+    }
 
+    public URI convertToPrivateUri(final URI publicUri) {
+        if (!isValidPublicUri(publicUri)) {
+            // TODO DCAC-71 Structured logging
+            final String error = "Invalid public URI: " + publicUri;
+            logger.error(error);
+            throw new UriConversionException(error);
+        }
+
+        final var hostName = publicUri.getHost().split("\\.")[0];
+        final var bucketUri = S3_SCHEME_PREFIX + hostName;
+        final var documentKey = publicUri.getPath();
+
+        try {
+            return createURI(bucketUri, documentKey);
+        } catch (URISyntaxException ex) {
+            // TODO DCAC-71 Structured logging
+            final String error = "Caught URISyntaxException creating private URI from `" +
+                    bucketUri  + "' and '" + documentKey + "', derived from public URI '" + publicUri +
+                    "`, error message is '" + ex.getMessage() + "'";
+            logger.error(error);
+            throw new UriConversionException(error, ex);
+        }
+    }
+
+    protected URI createURI(final String bucketUri, final String documentKey) throws URISyntaxException {
         return new URI(bucketUri + documentKey);
+    }
+
+    private boolean isValidPublicUri(final URI publicUri) {
+        final Matcher matcher = PUBLIC_URI_PATTERN.matcher(publicUri.toString());
+        return matcher.find();
     }
 }

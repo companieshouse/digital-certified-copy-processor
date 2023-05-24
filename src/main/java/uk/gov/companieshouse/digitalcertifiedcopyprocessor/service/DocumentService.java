@@ -35,7 +35,7 @@ public class DocumentService {
         this.converter = converter;
     }
 
-    public URI getPrivateUri(final String documentMetadata) throws URISyntaxException {
+    public URI getPrivateUri(final String documentMetadata) {
         final URI publicUri = getPublicUri(documentMetadata);
         return converter.convertToPrivateUri(publicUri);
     }
