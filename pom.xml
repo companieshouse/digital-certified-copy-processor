@@ -37,8 +37,7 @@
         <!-- Structured logging -->
         <structured-logging.version>1.9.20</structured-logging.version>
 
-        <!-- TODO DCAC-71 > 1.0.6 -->
-        <api-sdk-manager-java-library.version>unversioned</api-sdk-manager-java-library.version>
+        <api-sdk-manager-java-library.version>1.0.7</api-sdk-manager-java-library.version>
 
         <spring-cloud-contract-wiremock.version>2.2.2.RELEASE</spring-cloud-contract-wiremock.version>
         <!-- system-rules: 1.17.2 is the latest version that works with JUnit 5.
