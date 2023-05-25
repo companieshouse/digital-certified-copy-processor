@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -32,7 +31,9 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.LOCATION;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT_METADATA;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.EXPECTED_PRIVATE_DOCUMENT_URI;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.PUBLIC_DOCUMENT_URI;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils.givenSdkIsConfigured;
 
 /**
@@ -45,19 +46,6 @@ class DocumentServiceIntegrationTest {
 
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
-
-    private static final String DOCUMENT_METADATA = "/document/specimen";
-
-    private static final URI EXPECTED_PRIVATE_DOCUMENT_URI;
-    static {
-        try {
-            EXPECTED_PRIVATE_DOCUMENT_URI = new URI(
-                "s3://document-api-images-cidev/docs/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0/application-pdf");
-        } catch (URISyntaxException e) {
-            // This will not happen.
-            throw new RuntimeException(e);
-        }
-    }
 
     @Autowired
     private DocumentService serviceUnderTest;
@@ -78,7 +66,7 @@ class DocumentServiceIntegrationTest {
         givenThat(get(urlEqualTo( DOCUMENT_METADATA + "/content"))
                 .willReturn(aResponse()
                         .withStatus(302)
-                        .withHeader("Location", LOCATION)));
+                        .withHeader("Location", PUBLIC_DOCUMENT_URI)));
 
         // When
         final URI privateUri =
@@ -129,8 +117,8 @@ class DocumentServiceIntegrationTest {
                         () -> serviceUnderTest.getPrivateUri(DOCUMENT_METADATA));
         assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason =
-                "Caught ApiErrorResponseException with status 500, and message 'null' getting public URI using " +
-                        "document content request " + DOCUMENT_METADATA + "/content.";
+                "Caught ApiErrorResponseException with status code 500, and status message 'Connection reset' " +
+                        "getting public URI using document content request " + DOCUMENT_METADATA + "/content.";
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
 

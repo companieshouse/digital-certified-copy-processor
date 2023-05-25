@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.EXPECTED_PRIVATE_DOCUMENT_URI;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.LOCATION;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.PUBLIC_DOCUMENT_URI;
 
 @ExtendWith(MockitoExtension.class)
 class PublicToPrivateUriConverterTest {
@@ -24,7 +24,7 @@ class PublicToPrivateUriConverterTest {
     private static final String EXPECTED_INVALID_PRIVATE_URI_MESSAGE =
     "Caught URISyntaxException creating private URI from `s3://document-api-images-cidev' and " +
             "'/docs/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0/application-pdf', derived from public URI '"
-            + LOCATION + "`, error message is 'Invalid URI: s3://blah'";
+            + PUBLIC_DOCUMENT_URI + "`, error message is 'Invalid URI: s3://blah'";
 
     @InjectMocks
     private PublicToPrivateUriConverter converterUnderTest;
@@ -37,7 +37,7 @@ class PublicToPrivateUriConverterTest {
     void convertToPrivateUriConvertsAsExpected() throws URISyntaxException {
 
         // Given and when
-        final URI privateUri = converterUnderTest.convertToPrivateUri(new URI(LOCATION));
+        final URI privateUri = converterUnderTest.convertToPrivateUri(new URI(PUBLIC_DOCUMENT_URI));
 
         // Then
         assertThat(privateUri, is(EXPECTED_PRIVATE_DOCUMENT_URI));
@@ -65,7 +65,7 @@ class PublicToPrivateUriConverterTest {
     void convertToPrivateUriRejectsUriLeadingToInvalidPrivateUri() throws URISyntaxException {
 
         // Given
-        final URI validPublicUri = new URI(LOCATION);
+        final URI validPublicUri = new URI(PUBLIC_DOCUMENT_URI);
         final var localConverter = new PublicToPrivateUriConverter(logger) {
             @Override
             protected URI createURI(String bucketUri, String documentKey) throws URISyntaxException {

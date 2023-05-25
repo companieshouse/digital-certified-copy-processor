@@ -30,6 +30,8 @@ import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 import static software.amazon.awssdk.core.SdkSystemSetting.AWS_ACCESS_KEY_ID;
 import static software.amazon.awssdk.core.SdkSystemSetting.AWS_SECRET_ACCESS_KEY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT_METADATA;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.EXPECTED_PRIVATE_DOCUMENT_URI;
 import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 /**
@@ -43,20 +45,6 @@ import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
 @SpringJUnitConfig(classes={RestTemplateGetDocumentApiPdfFromCidev.Config.class, TestConfig.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class RestTemplateGetDocumentApiPdfFromCidev {
-
-    private static final String DOCUMENT_METADATA = "/document/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0";
-
-    private static final URI EXPECTED_PRIVATE_DOCUMENT_URI;
-
-    static {
-        try {
-            EXPECTED_PRIVATE_DOCUMENT_URI = new URI(
-                 "s3://document-api-images-cidev/docs/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0/application-pdf");
-        } catch (URISyntaxException e) {
-            // This will not happen
-            throw new RuntimeException(e);
-        }
-    }
 
     private static final String DOWNLOADED_DOCUMENT_PATH = "./test/downloaded.pdf";
 

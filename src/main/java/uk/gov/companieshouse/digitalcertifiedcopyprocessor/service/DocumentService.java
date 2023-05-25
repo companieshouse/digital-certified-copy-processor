@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriTemplate;
@@ -15,13 +14,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.HttpStatus.FOUND;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class DocumentService {
 
-    private static final UriTemplate GET_SHORT_LIVED_DOCUMENT_URL = new UriTemplate("{documentMetadata}/content");
+    private static final UriTemplate GET_DOCUMENT_CONTENT_URL = new UriTemplate("{documentMetadata}/content");
 
     private final ApiClientService apiClientService;
 
@@ -36,29 +37,26 @@ public class DocumentService {
     }
 
     public URI getPrivateUri(final String documentMetadata) {
-        final URI publicUri = getPublicUri(documentMetadata);
+        final var publicUri = getPublicUri(documentMetadata);
         return converter.convertToPrivateUri(publicUri);
     }
 
     public URI getPublicUri(final String documentMetadata) {
-        final String uri = GET_SHORT_LIVED_DOCUMENT_URL.expand(documentMetadata).toString();
+        final String uri = GET_DOCUMENT_CONTENT_URL.expand(documentMetadata).toString();
         try {
-            final ApiResponse<Void> response = getDocumentContent(uri);
-            final var headers = response.getHeaders();
-            // TODO DCAC-71 Error handling
-            final var locations = (List<String>) headers.get(HttpHeaders.LOCATION.toLowerCase());
-            return new URI(locations.get(0));
+            final var response = getDocumentContent(uri);
+            return getFirstLocationAsUri(response);
         } catch (ApiErrorResponseException ex) {
-            final String error = "Caught ApiErrorResponseException with status " +
-                    ex.getStatusCode() + ", and message '" + ex.getMessage() +
+            final var error = "Caught ApiErrorResponseException with status code " +
+                    ex.getStatusCode() + ", and status message '" + ex.getStatusMessage() +
                     "' getting public URI using document content request " + uri + ".";
             // TODO DCAC-71 Structured logging
             // throw getResponseStatusException(ex, apiClient, companyNumber, filingHistoryDocumentId, uri);
             logger.error(error, ex);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
-        } catch (URIValidationException | URISyntaxException ex) {
+        } catch (URIValidationException ex) {
             // Should this happen (unlikely), it is a broken contract, hence 500.
-            final String error = "Invalid URI " + uri + " to get document public URI.";
+            final var error = "Invalid URI " + uri + " to get document public URI.";
             // TODO DCAC-71 Structured logging
             // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
             logger.error(error, ex);
@@ -68,10 +66,10 @@ public class DocumentService {
 
     private ApiResponse<Void> getDocumentContent(final String uri)
             throws ApiErrorResponseException, URIValidationException {
-        final ApiResponse<Void> response = getApiClient().document().getDocument(uri).execute();
+        final var response = getApiClient().document().getDocument(uri).execute();
         if (response.getStatusCode() != FOUND.value()) {
             // TODO DCAC-71 Structured logging
-            final String error = "Received unexpected response status code " +
+            final var error = "Received unexpected response status code " +
                     response.getStatusCode() +
                     " getting public URI using document content request " +
                     uri + ".";
@@ -79,6 +77,29 @@ public class DocumentService {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
         return response;
+    }
+
+    private URI getFirstLocationAsUri(final ApiResponse<Void> response) {
+        final var headers = response.getHeaders();
+        var locations = (List<String>) headers.get(LOCATION.toLowerCase());
+        if (isEmpty(locations)) {
+            // Should this happen (unlikely), it would likely not be a recoverable issue?
+            final var error = "No locations found in response from document API.";
+            // TODO DCAC-71 Structured logging
+            // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
+            logger.error(error);
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+        }
+        try {
+            return new URI(locations.get(0));
+        } catch (URISyntaxException ex) {
+            // Should this happen (unlikely), it would likely not be a recoverable issue?
+            final var error = "Invalid URI `" + locations.get(0) + "` obtained from Location header.";
+            // TODO DCAC-71 Structured logging
+            // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
+            logger.error(error, ex);
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+        }
     }
 
     private ApiClient getApiClient() {
