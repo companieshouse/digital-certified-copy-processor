@@ -18,6 +18,8 @@ import java.util.Collections;
 import static java.lang.System.getenv;
 
 /**
+ * This provides a way of testing the sending of a document content request to the cidev document API without going
+ * via the Java SDKs only. It might be useful for troubleshooting.
  * @deprecated Use {@link DocumentService}.
  */
 @Service
@@ -37,7 +39,7 @@ public class RestTemplateDocumentService {
         this.converter = converter;
     }
 
-    public URI getPrivateUri(final String documentMetadata) throws URISyntaxException {
+    public URI getPrivateUri(final String documentMetadata) {
         final URI publicUri = getPublicUri(documentMetadata);
         return converter.convertToPrivateUri(publicUri);
     }
@@ -49,8 +51,6 @@ public class RestTemplateDocumentService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_PDF));
         final HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
 
-        // TODO DCAC-71 Configure doc api domain
-        // TODO DCAC-71 Structured logging
         final var message =
                 restTemplate.exchange(
                         "http://document-api-cidev.aws.chdev.org" + uri,
@@ -61,7 +61,6 @@ public class RestTemplateDocumentService {
     }
 
     private static String getBasicAuthCredentials() {
-        // TODO DCAC-71 Constants, required env vars etc
         return getenv("BASIC_AUTH_CREDENTIALS");
     }
 
