@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter;
 
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.UriConversionException;
 import uk.gov.companieshouse.logging.Logger;
@@ -8,8 +10,6 @@ import uk.gov.companieshouse.logging.util.DataMap;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class PublicToPrivateUriConverter {
