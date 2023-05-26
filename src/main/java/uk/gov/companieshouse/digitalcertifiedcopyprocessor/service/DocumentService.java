@@ -51,7 +51,7 @@ public class DocumentService {
     }
 
     public URI getPublicUri(final String documentMetadata) {
-        final String uri = GET_DOCUMENT_CONTENT_URL.expand(documentMetadata).toString();
+        final var uri = GET_DOCUMENT_CONTENT_URL.expand(documentMetadata).toString();
         try {
             final var response = getDocumentContent(uri, documentMetadata);
             return getFirstLocationAsUri(response, documentMetadata);

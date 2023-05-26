@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter;
 
-import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.UriConversionException;
@@ -51,7 +50,7 @@ public class PublicToPrivateUriConverter {
     }
 
     private boolean isValidPublicUri(final URI publicUri) {
-        final Matcher matcher = PUBLIC_URI_PATTERN.matcher(publicUri.toString());
+        final var matcher = PUBLIC_URI_PATTERN.matcher(publicUri.toString());
         return matcher.find();
     }
 
