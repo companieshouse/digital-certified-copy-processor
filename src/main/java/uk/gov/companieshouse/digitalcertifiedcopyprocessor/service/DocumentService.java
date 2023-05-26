@@ -9,10 +9,12 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.LOCATION;
@@ -37,57 +39,57 @@ public class DocumentService {
     }
 
     public URI getPrivateUri(final String documentMetadata) {
+        logger.info("Getting private URI for document metadata " + documentMetadata + ".",
+                getLogMap(documentMetadata));
         final var publicUri = getPublicUri(documentMetadata);
-        return converter.convertToPrivateUri(publicUri);
+        logger.info("Got public URI " + publicUri + " for document metadata " + documentMetadata + ".",
+                getLogMap(documentMetadata, publicUri));
+        final var privateUri = converter.convertToPrivateUri(publicUri);
+        logger.info("Got private URI " + privateUri + " for document metadata " + documentMetadata + ".",
+                getLogMap(documentMetadata, publicUri, privateUri));
+        return privateUri;
     }
 
     public URI getPublicUri(final String documentMetadata) {
         final String uri = GET_DOCUMENT_CONTENT_URL.expand(documentMetadata).toString();
         try {
-            final var response = getDocumentContent(uri);
-            return getFirstLocationAsUri(response);
+            final var response = getDocumentContent(uri, documentMetadata);
+            return getFirstLocationAsUri(response, documentMetadata);
         } catch (ApiErrorResponseException ex) {
             final var error = "Caught ApiErrorResponseException with status code " +
                     ex.getStatusCode() + ", and status message '" + ex.getStatusMessage() +
                     "' getting public URI using document content request " + uri + ".";
-            // TODO DCAC-71 Structured logging
-            // throw getResponseStatusException(ex, apiClient, companyNumber, filingHistoryDocumentId, uri);
-            logger.error(error, ex);
+            logger.error(error, ex, getLogMap(documentMetadata));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         } catch (URIValidationException ex) {
             // Should this happen (unlikely), it is a broken contract, hence 500.
             final var error = "Invalid URI " + uri + " to get document public URI.";
-            // TODO DCAC-71 Structured logging
-            // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
-            logger.error(error, ex);
+            logger.error(error, ex, getLogMap(documentMetadata));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
     }
 
-    private ApiResponse<Void> getDocumentContent(final String uri)
+    private ApiResponse<Void> getDocumentContent(final String uri, final String documentMetadata)
             throws ApiErrorResponseException, URIValidationException {
-        final var response = getApiClient().document().getDocument(uri).execute();
+        final var response = getApiClient(documentMetadata).document().getDocument(uri).execute();
         if (response.getStatusCode() != FOUND.value()) {
-            // TODO DCAC-71 Structured logging
             final var error = "Received unexpected response status code " +
                     response.getStatusCode() +
                     " getting public URI using document content request " +
                     uri + ".";
-            logger.error(error);
+            logger.error(error, getLogMap(documentMetadata));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
         return response;
     }
 
-    private URI getFirstLocationAsUri(final ApiResponse<Void> response) {
+    private URI getFirstLocationAsUri(final ApiResponse<Void> response, final String documentMetadata) {
         final var headers = response.getHeaders();
         var locations = (List<String>) headers.get(LOCATION.toLowerCase());
         if (isEmpty(locations)) {
             // Should this happen (unlikely), it would likely not be a recoverable issue?
             final var error = "No locations found in response from document API.";
-            // TODO DCAC-71 Structured logging
-            // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
-            logger.error(error);
+            logger.error(error, getLogMap(documentMetadata));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
         try {
@@ -95,20 +97,43 @@ public class DocumentService {
         } catch (URISyntaxException ex) {
             // Should this happen (unlikely), it would likely not be a recoverable issue?
             final var error = "Invalid URI `" + locations.get(0) + "` obtained from Location header.";
-            // TODO DCAC-71 Structured logging
-            // logger.error(error, ex, getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
-            logger.error(error, ex);
+            logger.error(error, ex, getLogMap(documentMetadata));
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
     }
 
-    private ApiClient getApiClient() {
+    private ApiClient getApiClient(final String documentMetadata) {
         try {
             return apiClientService.getApiClient();
         } catch (RuntimeException re) {
-            logger.error("Caught RuntimeException getting API client: " + re.getMessage());
+            logger.error("Caught RuntimeException getting API client: " + re.getMessage(),
+                    getLogMap(documentMetadata));
             throw re;
         }
+    }
+
+    private Map<String, Object> getLogMap(final String documentMetadata) {
+        return new DataMap.Builder()
+                .filingHistoryDocumentMetadata(documentMetadata)
+                .build()
+                .getLogMap();
+    }
+
+    private Map<String, Object> getLogMap(final String documentMetadata, final URI publicUri) {
+        return new DataMap.Builder()
+                .filingHistoryDocumentMetadata(documentMetadata)
+                .documentPublicUri(publicUri.toString())
+                .build()
+                .getLogMap();
+    }
+
+    private Map<String, Object> getLogMap(final String documentMetadata, final URI publicUri, final URI privateUri) {
+        return new DataMap.Builder()
+                .filingHistoryDocumentMetadata(documentMetadata)
+                .documentPublicUri(publicUri.toString())
+                .documentPrivateUri(privateUri.toString())
+                .build()
+                .getLogMap();
     }
 
 }

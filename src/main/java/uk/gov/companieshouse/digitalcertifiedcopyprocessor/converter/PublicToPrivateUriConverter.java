@@ -3,9 +3,11 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.UriConversionException;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,9 +26,8 @@ public class PublicToPrivateUriConverter {
 
     public URI convertToPrivateUri(final URI publicUri) {
         if (!isValidPublicUri(publicUri)) {
-            // TODO DCAC-71 Structured logging
             final String error = "Invalid public URI: " + publicUri;
-            logger.error(error);
+            logger.error(error, getLogMap(publicUri));
             throw new UriConversionException(error);
         }
 
@@ -37,11 +38,10 @@ public class PublicToPrivateUriConverter {
         try {
             return createURI(bucketUri, documentKey);
         } catch (URISyntaxException ex) {
-            // TODO DCAC-71 Structured logging
             final String error = "Caught URISyntaxException creating private URI from `" +
                     bucketUri  + "' and '" + documentKey + "', derived from public URI '" + publicUri +
                     "`, error message is '" + ex.getMessage() + "'";
-            logger.error(error);
+            logger.error(error, getLogMap(publicUri));
             throw new UriConversionException(error, ex);
         }
     }
@@ -53,5 +53,12 @@ public class PublicToPrivateUriConverter {
     private boolean isValidPublicUri(final URI publicUri) {
         final Matcher matcher = PUBLIC_URI_PATTERN.matcher(publicUri.toString());
         return matcher.find();
+    }
+
+    private Map<String, Object> getLogMap(final URI publicUri) {
+        return new DataMap.Builder()
+                .documentPublicUri(publicUri.toString())
+                .build()
+                .getLogMap();
     }
 }
