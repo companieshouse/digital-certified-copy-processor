@@ -17,7 +17,7 @@ public class PublicToPrivateUriConverter {
     private final Logger logger;
 
     private static final Pattern PUBLIC_URI_PATTERN =
-            Pattern.compile("^https:\\/\\/.*\\.s3\\.eu-west-2\\.amazonaws\\.com\\/(.*?pdf)");
+            Pattern.compile("^https://.*\\.s3\\.eu-west-2\\.amazonaws\\.com/(.*?pdf)");
     private static final String S3_SCHEME_PREFIX = "s3://";
 
     public PublicToPrivateUriConverter(Logger logger) {
