@@ -1,13 +1,14 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.NonRetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 
@@ -19,7 +20,6 @@ import java.util.Map;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class DocumentService {
@@ -60,12 +60,12 @@ public class DocumentService {
                     ex.getStatusCode() + ", and status message '" + ex.getStatusMessage() +
                     "' getting public URI using document content request " + uri + ".";
             logger.error(error, ex, getLogMap(documentMetadata));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+            throw new RetryableException(error, ex);
         } catch (URIValidationException ex) {
-            // Should this happen (unlikely), it is a broken contract, hence 500.
+            // Should this happen (unlikely), it is a programmatic error, hence not recoverable.
             final var error = "Invalid URI " + uri + " to get document public URI.";
             logger.error(error, ex, getLogMap(documentMetadata));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+            throw new NonRetryableException(error, ex);
         }
     }
 
@@ -78,7 +78,7 @@ public class DocumentService {
                     " getting public URI using document content request " +
                     uri + ".";
             logger.error(error, getLogMap(documentMetadata));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+            throw new RetryableException(error);
         }
         return response;
     }
@@ -87,18 +87,18 @@ public class DocumentService {
         final var headers = response.getHeaders();
         var locations = (List<String>) headers.get(LOCATION.toLowerCase());
         if (isEmpty(locations)) {
-            // Should this happen (unlikely), it would likely not be a recoverable issue?
+            // Should this happen (unlikely), it would likely not be a recoverable issue.
             final var error = "No locations found in response from document API.";
             logger.error(error, getLogMap(documentMetadata));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+            throw new NonRetryableException(error);
         }
         try {
             return new URI(locations.get(0));
         } catch (URISyntaxException ex) {
-            // Should this happen (unlikely), it would likely not be a recoverable issue?
+            // Should this happen (unlikely), it would likely not be a recoverable issue.
             final var error = "Invalid URI `" + locations.get(0) + "` obtained from Location header.";
             logger.error(error, ex, getLogMap(documentMetadata));
-            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+            throw new NonRetryableException(error, ex);
         }
     }
 
@@ -106,9 +106,10 @@ public class DocumentService {
         try {
             return apiClientService.getApiClient();
         } catch (RuntimeException re) {
-            logger.error("Caught RuntimeException getting API client: " + re.getMessage(),
-                    getLogMap(documentMetadata));
-            throw re;
+            // Should this happen (unlikely), it would likely not be a recoverable issue.
+            final var error = "Caught RuntimeException getting API client: " + re.getMessage();
+            logger.error(error, getLogMap(documentMetadata));
+            throw new NonRetryableException(error, re);
         }
     }
 

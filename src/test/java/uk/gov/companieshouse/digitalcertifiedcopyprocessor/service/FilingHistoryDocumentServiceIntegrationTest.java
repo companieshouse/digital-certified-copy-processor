@@ -10,7 +10,6 @@ import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Error;
 import uk.gov.companieshouse.logging.Logger;
@@ -43,8 +42,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.NAMESPACE;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils.givenSdkIsConfigured;
 
@@ -132,8 +130,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("getDocumentMetadata() throws 400 Bad Request for an unknown company")
-    void getDocumentMetadataThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
+    @DisplayName("getDocumentMetadata() throws RetryableException for an unknown company")
+    void getDocumentMetadataThrowsRetryableExceptionForUnknownCompany() throws JsonProcessingException {
 
         // Given
         givenSdkIsConfigured(environment, environmentVariables);
@@ -143,18 +141,17 @@ class FilingHistoryDocumentServiceIntegrationTest {
                         .withBody(objectMapper.writeValueAsString(FILING_NOT_FOUND))));
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(UNKNOWN_COMPANY_NUMBER, ID_1));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + ID_1 +
                 " for company number " + UNKNOWN_COMPANY_NUMBER + ".";
-        assertThat(exception.getReason(), Is.is(expectedReason));
+        assertThat(exception.getMessage(), Is.is(expectedReason));
     }
 
     @Test
-    @DisplayName("getDocumentMetadata() throws 400 Bad Request for an unknown filing history document")
-    void getDocumentMetadataThrowsBadRequestForUnknownFilingHistoryDocument() throws JsonProcessingException {
+    @DisplayName("getDocumentMetadata() throws RetryableException for an unknown filing history document")
+    void getDocumentMetadataThrowsRetryableExceptionForUnknownFilingHistoryDocument() throws JsonProcessingException {
 
         // Given
         givenSdkIsConfigured(environment, environmentVariables);
@@ -163,18 +160,17 @@ class FilingHistoryDocumentServiceIntegrationTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(FILING_NOT_FOUND))));
 
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, UNKNOWN_ID));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
                 " for company number " + COMPANY_NUMBER + ".";
-        assertThat(exception.getReason(), Is.is(expectedReason));
+        assertThat(exception.getMessage(), is(expectedReason));
     }
 
     @Test
-    @DisplayName("getDocumentMetadata() throws 500 Internal Server Error for connection failure")
-    void getDocumentMetadataThrowsInternalServerErrorForForConnectionFailure() {
+    @DisplayName("getDocumentMetadata() throws RetryableException for connection failure")
+    void getDocumentMetadataThrowsRetryableExceptionForConnectionFailure() {
 
         // Given
         final String wireMockPort = givenSdkIsConfigured(environment, environmentVariables);
@@ -182,13 +178,12 @@ class FilingHistoryDocumentServiceIntegrationTest {
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, ID_1));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
                 + wireMockPort + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
-        assertThat(exception.getReason(), Is.is(expectedReason));
+        assertThat(exception.getMessage(), is(expectedReason));
     }
 
     private String getFilingHistoryResponsePayload() throws JsonProcessingException {

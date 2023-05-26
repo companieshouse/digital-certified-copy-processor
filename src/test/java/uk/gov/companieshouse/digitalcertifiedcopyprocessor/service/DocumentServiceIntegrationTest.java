@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 
 import java.net.URI;
 
@@ -28,7 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.serviceUnavailable
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT_METADATA;
@@ -77,8 +76,8 @@ class DocumentServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("getPrivateUri() throws 500 Internal Server Error for unknown document")
-    void getPrivateUriThrowsInternalServerErrorForUnknownDocument() {
+    @DisplayName("getPrivateUri() throws RetryableException for unknown document")
+    void getPrivateUriThrowsRetryableExceptionForUnknownDocument() {
 
         // Given
         givenSdkIsConfigured(environment, environmentVariables);
@@ -86,12 +85,12 @@ class DocumentServiceIntegrationTest {
                 .willReturn(notFound()));
 
         // When and then
-        assertDocumentApiRequestIssuePropagated(NOT_FOUND);
+        assertDocumentApiRequestIssuePropagatedAsRetryableException(NOT_FOUND);
     }
 
     @Test
-    @DisplayName("getPrivateUri() throws 500 Internal Server Error for service unavailable")
-    void getPrivateUriThrowsInternalServerErrorForServiceUnavailable() {
+    @DisplayName("getPrivateUri() throws RetryableException for service unavailable")
+    void getPrivateUriThrowsRetryableExceptionForServiceUnavailable() {
 
         // Given
         givenSdkIsConfigured(environment, environmentVariables);
@@ -99,12 +98,12 @@ class DocumentServiceIntegrationTest {
                 .willReturn(serviceUnavailable()));
 
         // When and then
-        assertDocumentApiRequestIssuePropagated(SERVICE_UNAVAILABLE);
+        assertDocumentApiRequestIssuePropagatedAsRetryableException(SERVICE_UNAVAILABLE);
     }
 
     @Test
-    @DisplayName("getPrivateUri() throws 500 Internal Server Error for connection reset")
-    void getPrivateUriThrowsInternalServerErrorForConnectionReset() {
+    @DisplayName("getPrivateUri() throws RetryableException for connection reset")
+    void getPrivateUriThrowsRetryableExceptionForConnectionReset() {
 
         // Given
         givenSdkIsConfigured(environment, environmentVariables);
@@ -112,26 +111,24 @@ class DocumentServiceIntegrationTest {
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getPrivateUri(DOCUMENT_METADATA));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason =
                 "Caught ApiErrorResponseException with status code 500, and status message 'Connection reset' " +
                         "getting public URI using document content request " + DOCUMENT_METADATA + "/content.";
-        assertThat(exception.getReason(), Is.is(expectedReason));
+        assertThat(exception.getMessage(), Is.is(expectedReason));
     }
 
-    private void assertDocumentApiRequestIssuePropagated(final HttpStatus underlyingStatus) {
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+    private void assertDocumentApiRequestIssuePropagatedAsRetryableException(final HttpStatus underlyingStatus) {
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getPrivateUri(DOCUMENT_METADATA));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason =
                 "Received unexpected response status code " +
                         underlyingStatus.value() + " getting public URI using document content request "
                         + DOCUMENT_METADATA + "/content.";
-        assertThat(exception.getReason(), Is.is(expectedReason));
+        assertThat(exception.getMessage(), Is.is(expectedReason));
     }
 
 }

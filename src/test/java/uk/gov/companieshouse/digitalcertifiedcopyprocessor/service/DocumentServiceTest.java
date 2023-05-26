@@ -1,12 +1,12 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.document.DocumentResourceHandler;
@@ -14,6 +14,8 @@ import uk.gov.companieshouse.api.handler.document.request.DocumentGet;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.NonRetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.IOException;
@@ -70,6 +72,7 @@ class DocumentServiceTest {
 
 
     @Test
+    @DisplayName("getPrivateUri() gets URI successfully")
     void getPrivateUriGetsUriSuccessfully() throws ApiErrorResponseException, URIValidationException {
 
         // Given
@@ -85,6 +88,7 @@ class DocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getPublicUri() gets URI successfully")
     void getPublicUriGetsUriSuccessfully() throws ApiErrorResponseException, URIValidationException {
 
         // Given
@@ -98,40 +102,43 @@ class DocumentServiceTest {
         assertThat(publicUri, is(EXPECTED_PUBLIC_DOCUMENT_URI));
     }
 
-    // TODO DCAC-71 Can we make the following error scenario behaviours ready for a consumer context?
-
     @Test
-    void getPublicUriPropagatesApiClientServiceRuntimeException()  {
+    @DisplayName(
+            "getPublicUri() propagates a RuntimeException from the ApiClientService wrapped as a NonRetryableException")
+    void getPublicUriErrorsRetryablyForApiClientServiceRuntimeException()  {
 
         // Given
-        when(apiClientService.getApiClient())
-                .thenThrow(new RuntimeException("Environment variable missing: DOCUMENT_API_LOCAL_URL"));
+        var underlyingError = "Environment variable missing: DOCUMENT_API_LOCAL_URL";
+        when(apiClientService.getApiClient()).thenThrow(new RuntimeException(underlyingError));
 
         // When
-        final RuntimeException exception =
-                assertThrows(RuntimeException.class,
+        final NonRetryableException exception =
+                assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        assertThat(exception.getMessage(), is("Environment variable missing: DOCUMENT_API_LOCAL_URL"));
+        assertThat(exception.getMessage(), is("Caught RuntimeException getting API client: " + underlyingError));
     }
 
     @Test
-    void getPublicUriErrorsForNon302Response() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() throws a RetryableException for a non-302 response from the document API")
+    void getPublicUriErrorsRetryablyForNon302Response() throws ApiErrorResponseException, URIValidationException {
 
         // Given
         givenResponseWithStatus(NOT_FOUND);
 
         // When
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"Received unexpected response status code " +
+        final var expectedError = "Received unexpected response status code " +
                 NOT_FOUND.value() + " getting public URI using document content request " +
-                DOCUMENT_METADATA + "/content.\"";
+                DOCUMENT_METADATA + "/content.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
     @Test
-    void getPublicUriErrorsForApiErrorResponseException() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() propagates an ApiErrorResponseException wrapped in a RetryableException")
+    void getPublicUriErrorsRetryablyForApiErrorResponseException()
+            throws ApiErrorResponseException, URIValidationException {
 
         // Given
         final var underlyingErrorMessage = "Unknown IO error.";
@@ -139,33 +146,37 @@ class DocumentServiceTest {
                 ApiErrorResponseException.fromIOException(new IOException(underlyingErrorMessage)));
 
         // When and then
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final RetryableException exception =
+                assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"Caught ApiErrorResponseException with status code " +
-                INTERNAL_SERVER_ERROR.value() + ", and status message '" +  underlyingErrorMessage +
-                "' getting public URI using document content request " + DOCUMENT_METADATA + "/content.\"";
+        final var expectedError = "Caught ApiErrorResponseException with status code " + INTERNAL_SERVER_ERROR.value() +
+                ", and status message '" + underlyingErrorMessage +
+                "' getting public URI using document content request " + DOCUMENT_METADATA + "/content.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
     @Test
-    void getPublicUriErrorsForURIValidationException() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() propagates a URIValidationException wrapped in a NonRetryableException")
+    void getPublicUriErrorsNonRetryablyForURIValidationException()
+            throws ApiErrorResponseException, URIValidationException {
 
         // Given
         final var underlyingErrorMessage = "URI pattern does not match expected URI pattern for this resource.";
         givenRequestExecutionException(new URIValidationException(underlyingErrorMessage));
 
         // When and then
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final NonRetryableException exception =
+                assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"Invalid URI " + DOCUMENT_METADATA +
-                "/content to get document public URI.\"";
+        final var expectedError = "Invalid URI " + DOCUMENT_METADATA +
+                "/content to get document public URI.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
     @Test
-    void getPublicUriErrorsForURISyntaxException() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() propagates a URISyntaxException wrapped in a NonRetryableException")
+    void getPublicUriErrorsNonRetryablyForURISyntaxException()
+            throws ApiErrorResponseException, URIValidationException {
 
         // Given
         final var corruptedLocationHeaderValue = "corrupted location?";
@@ -173,16 +184,17 @@ class DocumentServiceTest {
         givenResponseContainsPublicUri(corruptedLocationHeaderValue);
 
         // When and then
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final NonRetryableException exception =
+                assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"Invalid URI `" + corruptedLocationHeaderValue +
-                "` obtained from Location header.\"";
+        final var expectedError = "Invalid URI `" + corruptedLocationHeaderValue +
+                "` obtained from Location header.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
     @Test
-    void getPublicUriErrorsIntelligiblyForNullLocations() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() throws a NonRetryableException if location is null")
+    void getPublicUriErrorsNonRetryablyForNullLocation() throws ApiErrorResponseException, URIValidationException {
 
         // Given
         givenResponseWithStatus(FOUND);
@@ -190,17 +202,18 @@ class DocumentServiceTest {
         when(headers.get(LOCATION.toLowerCase())).thenReturn(null);
 
         // When and then
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final NonRetryableException exception =
+                assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"No locations found in response from document API.\"";
+        final var expectedError = "No locations found in response from document API.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
 
 
     @Test
-    void getPublicUriErrorsIntelligiblyForEmptyLocations() throws ApiErrorResponseException, URIValidationException {
+    @DisplayName("getPublicUri() throws a NonRetryableException if location empty")
+    void getPublicUriErrorsNonRetryablyForEmptyLocation() throws ApiErrorResponseException, URIValidationException {
 
         // Given
         givenResponseWithStatus(FOUND);
@@ -208,10 +221,10 @@ class DocumentServiceTest {
         when(headers.get(LOCATION.toLowerCase())).thenReturn(new ArrayList<>());
 
         // When and then
-        final RuntimeException exception =
-                assertThrows(ResponseStatusException.class,
+        final NonRetryableException exception =
+                assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getPublicUri(DOCUMENT_METADATA));
-        final var expectedError = "500 INTERNAL_SERVER_ERROR \"No locations found in response from document API.\"";
+        final var expectedError = "No locations found in response from document API.";
         assertThat(exception.getMessage(), is(expectedError));
     }
 
