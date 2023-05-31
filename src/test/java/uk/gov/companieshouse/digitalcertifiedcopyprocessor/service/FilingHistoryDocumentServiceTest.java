@@ -9,12 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.filinghistory.FilingResourceHandler;
 import uk.gov.companieshouse.api.handler.filinghistory.request.FilingGet;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.NonRetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.IOException;
@@ -24,8 +25,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromHttpResponseException;
 import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromIOException;
 
@@ -69,37 +68,35 @@ class FilingHistoryDocumentServiceTest {
     private FilingGet filingGet;
 
     @Test
-    @DisplayName("getDocumentMetadata() reports a URIValidationException as an Internal Server Error (500)")
-    void uriValidationExceptionReportedAsServerInternalError() throws Exception  {
+    @DisplayName("getDocumentMetadata() propagates a URIValidationException wrapped as a NonRetryableException")
+    void getDocumentMetadataErrorsNonRetryablyForUriValidationException() throws Exception  {
 
         // Given
         setUpForFilingApiException(new URIValidationException(INVALID_URI));
 
         // When and then
-        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+        final NonRetryableException exception = assertThrows(NonRetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, FILING_SOUGHT));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
-        assertThat(exception.getReason(), is(INVALID_URI_EXPECTED_REASON));
+        assertThat(exception.getMessage(), is(INVALID_URI_EXPECTED_REASON));
     }
 
     @Test
-    @DisplayName("getDocumentMetadata() reports an IOException as an Internal Server Error (500)")
-    void serverInternalErrorReportedAsSuch() throws Exception {
+    @DisplayName("getDocumentMetadata() propagates an IOException wrapped as a RetryableException")
+    void getDocumentMetadataErrorsRetryablyForIOException() throws Exception {
 
         // Given
         setUpForFilingApiException(fromIOException(new IOException(IOEXCEPTION_MESSAGE)));
         when(internalApiClient.getBasePath()).thenReturn("http://host");
 
         // When and then
-        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+        final RetryableException exception = assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, FILING_SOUGHT));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
-        assertThat(exception.getReason(), is(IOEXCEPTION_EXPECTED_REASON));
+        assertThat(exception.getMessage(), is(IOEXCEPTION_EXPECTED_REASON));
     }
 
     @Test
-    @DisplayName("getDocumentMetadata() reports a Not Found response as a Bad Request (400)")
-    void nonServerInternalErrorResponseReportedAsBadRequest() throws Exception {
+    @DisplayName("getDocumentMetadata() reports a Not Found response as a RetryableException")
+    void nonServerInternalErrorReportedAsRetryableException() throws Exception {
 
         // Given
         final var httpResponse = mock(HttpResponse.class);
@@ -112,10 +109,9 @@ class FilingHistoryDocumentServiceTest {
         setUpForFilingApiException(ex);
 
         // When and then
-        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+        final RetryableException exception = assertThrows(RetryableException.class,
                 () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, FILING_SOUGHT));
-        assertThat(exception.getStatus(), is(BAD_REQUEST));
-        assertThat(exception.getReason(), is(NOT_FOUND_EXPECTED_REASON));
+        assertThat(exception.getMessage(), is(NOT_FOUND_EXPECTED_REASON));
     }
 
     /**

@@ -19,6 +19,7 @@ public class TestUtils {
         variables.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
         variables.set("API_URL", "http://localhost:" + wireMockPort);
         variables.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        variables.set("DOCUMENT_API_LOCAL_URL", "http://localhost:" + wireMockPort);
         return wireMockPort;
     }
 
@@ -32,6 +33,7 @@ public class TestUtils {
         variables.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
         variables.set("API_URL", "http://api.chs.local:4001");
         variables.set("PAYMENTS_API_URL", "http://api.chs.local:4001");
+        variables.set("DOCUMENT_API_LOCAL_URL", "http://document-api-cidev.aws.chdev.org");
     }
 
     /**
@@ -45,6 +47,7 @@ public class TestUtils {
         variables.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
         variables.set("API_URL", "http://api.chs.local:4001");
         variables.set("PAYMENTS_API_URL", "http://api.chs.local:4001");
+        variables.set("DOCUMENT_API_LOCAL_URL", "http://document-api-cidev.aws.chdev.org");
         variableValues.forEach(variables::set);
     }
 
