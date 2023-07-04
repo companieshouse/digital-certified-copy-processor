@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class Consumer {
 
-    private final Service service;
+    private final NullService service;
     private final MessageFlags messageFlags;
 
-    public Consumer(Service service, MessageFlags messageFlags) {
+    public Consumer(NullService service, MessageFlags messageFlags) {
         this.service = service;
         this.messageFlags = messageFlags;
     }
@@ -31,14 +31,14 @@ public class Consumer {
             id = "${consumer.group_id}",
             containerFactory = "kafkaListenerContainerFactory",
             topics = "${consumer.topic}",
-            groupId = "${consumer.group_id}"
+            groupId = "${consumer.group_id}",
+            autoStartup = "true"
     )
     @RetryableTopic(
             attempts = "${consumer.max_attempts}",
             autoCreateTopics = "false",
             backoff = @Backoff(delayExpression = "${consumer.backoff_delay}"),
-            retryTopicSuffix = "-${consumer.group_id}-retry",
-            dltTopicSuffix = "-${consumer.group_id}-error",
+            dltTopicSuffix = "-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
             fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
             include = RetryableException.class
