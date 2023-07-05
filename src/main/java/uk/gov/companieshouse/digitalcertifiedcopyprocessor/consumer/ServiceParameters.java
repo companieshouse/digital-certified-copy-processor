@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
 
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
+
 import java.util.Objects;
 
 /**
@@ -7,9 +9,9 @@ import java.util.Objects;
  */
 public class ServiceParameters {
 
-    private final String data;
+    private final ItemOrderedCertifiedCopy data;
 
-    public ServiceParameters(String data) {
+    public ServiceParameters(ItemOrderedCertifiedCopy data) {
         this.data = data;
     }
 
@@ -18,7 +20,7 @@ public class ServiceParameters {
      *
      * @return A string representing data that has been attached to the ServiceParameters object.
      */
-    public String getData() {
+    public ItemOrderedCertifiedCopy getData() {
         return data;
     }
 

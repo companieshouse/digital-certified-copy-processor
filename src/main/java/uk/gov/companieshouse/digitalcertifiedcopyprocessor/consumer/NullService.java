@@ -3,7 +3,7 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
 import org.springframework.stereotype.Component;
 
 /**
- * The default service.
+ * The default service is a placeholder for actually hooking up to the consuming service.
  */
 @Component
 class NullService implements Service {
