@@ -1,14 +1,14 @@
-package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
+package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 /**
  * Processes an incoming message.
  */
-public interface Service {
+public interface KafkaService {
 
     /**
      * Processes an incoming message.
      *
      * @param parameters Any parameters required when processing the message.
      */
-    void processMessage(ServiceParameters parameters);
+    void processMessage(KafkaServiceParameters parameters);
 }

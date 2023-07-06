@@ -7,6 +7,9 @@ import org.springframework.kafka.retrytopic.FixedDelayStrategy;
 import org.springframework.messaging.Message;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
 /**
@@ -46,7 +49,7 @@ public class Consumer {
     )
     public void consume(Message<ItemOrderedCertifiedCopy> message) {
         try {
-            service.processMessage(new ServiceParameters(message.getPayload()));
+            service.processMessage(new KafkaServiceParameters(message.getPayload()));
         } catch (RetryableException e) {
             messageFlags.setRetryable(true);
             throw e;

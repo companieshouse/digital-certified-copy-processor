@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
+package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
@@ -7,11 +7,11 @@ import java.util.Objects;
 /**
  * Contains all parameters required by {@link Service service implementations}.
  */
-public class ServiceParameters {
+public class KafkaServiceParameters {
 
     private final ItemOrderedCertifiedCopy data;
 
-    public ServiceParameters(ItemOrderedCertifiedCopy data) {
+    public KafkaServiceParameters(ItemOrderedCertifiedCopy data) {
         this.data = data;
     }
 
@@ -29,10 +29,10 @@ public class ServiceParameters {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ServiceParameters)) {
+        if (!(o instanceof KafkaServiceParameters)) {
             return false;
         }
-        ServiceParameters that = (ServiceParameters) o;
+        KafkaServiceParameters that = (KafkaServiceParameters) o;
         return Objects.equals(getData(), that.getData());
     }
 
