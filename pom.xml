@@ -47,6 +47,7 @@
         <mockito-core.version>5.3.1</mockito-core.version>
         <software.amazon.awssdk.version>2.19.14</software.amazon.awssdk.version>
         <kafka-models.version>1.0.33</kafka-models.version>
+        <handlebars.version>4.3.1</handlebars.version>
     </properties>
 
     <dependencyManagement>
@@ -139,6 +140,18 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sts</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>${handlebars.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars-helpers</artifactId>
+            <version>${handlebars.version}</version>
             <scope>test</scope>
         </dependency>
 
