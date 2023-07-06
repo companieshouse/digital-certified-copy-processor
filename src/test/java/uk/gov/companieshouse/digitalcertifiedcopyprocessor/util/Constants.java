@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -47,5 +49,17 @@ public class Constants {
             throw new RuntimeException(e);
         }
     }
+
+    public static final SignDigitalDocument DOCUMENT = SignDigitalDocument.newBuilder()
+            .setOrderNumber("ORD-152416-079544")
+            .setPrivateS3Location("s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf")
+            .setDocumentType("363s")
+            .setItemGroup("ORD-152416-079544-1")
+            .setCompanyName("Test Company")
+            .setCompanyNumber("00000000")
+            .setFilingHistoryDescription("A test filing history document")
+            .setFilingHistoryType("AM01")
+            .build();
+
 
 }
