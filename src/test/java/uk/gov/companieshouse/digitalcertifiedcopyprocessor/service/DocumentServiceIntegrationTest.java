@@ -14,8 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 
 import java.net.URI;
 
@@ -39,7 +41,10 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  * Integration tests the {@link DocumentService}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes={DocumentServiceIntegrationTest.Config.class, TestConfig.class})
+@SpringJUnitConfig(classes={DocumentServiceIntegrationTest.Config.class,
+                            TestConfig.class,
+                            KafkaConfig.class,
+                            SignDigitalDocumentFactory.class})
 @AutoConfigureWireMock(port = 0)
 class DocumentServiceIntegrationTest {
 
