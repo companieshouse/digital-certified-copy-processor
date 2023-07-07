@@ -15,7 +15,7 @@ public class SignDigitalDocumentFactory {
         return SignDigitalDocument.newBuilder()
                 .setPrivateS3Location(privateUri.toString())
                 .setDocumentType(CERTIFIED_COPY_DOCUMENT_TYPE)
-                .setItemGroup(certifiedCopy.getGroupItem()) // TODO DCAC-73 Update SignDigitalDocument field name
+                .setItemGroup(certifiedCopy.getGroupItem())
                 .setOrderNumber(certifiedCopy.getOrderNumber())
                 .setCompanyName(certifiedCopy.getCompanyName())
                 .setCompanyNumber(certifiedCopy.getCompanyNumber())
