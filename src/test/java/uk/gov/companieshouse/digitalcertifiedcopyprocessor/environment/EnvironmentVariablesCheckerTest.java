@@ -17,9 +17,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.API_URL;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CHS_API_KEY;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.DOCUMENT_API_LOCAL_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.SIGN_DIGITAL_DOCUMENT_TOPIC;
 
 @SpringBootTest
 @EmbeddedKafka
@@ -70,6 +72,19 @@ class EnvironmentVariablesCheckerTest {
     @Test
     void checkEnvironmentVariablesAllPresentReturnsFalseIfDocumentApiLocalUrlMissing() {
         populateAllVariablesExceptOneAndAssertSomethingMissing(DOCUMENT_API_LOCAL_URL);
+    }
+
+    @DisplayName("returns false if BOOTSTRAP_SERVER_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfBootstrapServerUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(BOOTSTRAP_SERVER_URL);
+    }
+
+
+    @DisplayName("returns false if SIGN_DIGITAL_DOCUMENT_TOPIC is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfSignDigitalDocumentTopicMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(SIGN_DIGITAL_DOCUMENT_TOPIC);
     }
 
     private void populateAllVariablesExceptOneAndAssertSomethingMissing(

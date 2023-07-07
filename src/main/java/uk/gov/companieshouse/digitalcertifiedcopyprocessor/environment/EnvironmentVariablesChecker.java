@@ -16,7 +16,9 @@ public class EnvironmentVariablesChecker {
         API_URL("API_URL"),
         PAYMENTS_API_URL("PAYMENTS_API_URL"),
         CHS_API_KEY("CHS_API_KEY"),
-        DOCUMENT_API_LOCAL_URL("DOCUMENT_API_LOCAL_URL");
+        DOCUMENT_API_LOCAL_URL("DOCUMENT_API_LOCAL_URL"),
+        BOOTSTRAP_SERVER_URL("BOOTSTRAP_SERVER_URL"),
+        SIGN_DIGITAL_DOCUMENT_TOPIC("SIGN_DIGITAL_DOCUMENT_TOPIC");
 
         private final String name;
 
