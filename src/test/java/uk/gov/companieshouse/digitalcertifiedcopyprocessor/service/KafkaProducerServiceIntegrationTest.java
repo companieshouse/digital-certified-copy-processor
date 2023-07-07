@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -36,7 +37,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.PRIVATE_DOCUMENT_URI;
 
 /**
@@ -57,8 +57,16 @@ class KafkaProducerServiceIntegrationTest {
     private static final Logger LOGGER = LoggerFactory.getLogger("KafkaProducerServiceIntegrationTest");
     private static final String SIGN_DIGITAL_DOCUMENT_TOPIC = "sign-digital-document";
     private static final int MESSAGE_WAIT_TIMEOUT_SECONDS = 10;
-
-    private static final SignDigitalDocument EXPECTED_SIGN_DIGITAL_DOCUMENT_MESSAGE = DOCUMENT;
+    private static final SignDigitalDocument EXPECTED_SIGN_DIGITAL_DOCUMENT_MESSAGE = SignDigitalDocument.newBuilder()
+            .setOrderNumber(CERTIFIED_COPY.getOrderNumber())
+            .setPrivateS3Location(PRIVATE_DOCUMENT_URI.toString())
+            .setDocumentType("certified-copy")
+            .setItemGroup(CERTIFIED_COPY.getGroupItem())
+            .setCompanyName(CERTIFIED_COPY.getCompanyName())
+            .setCompanyNumber(CERTIFIED_COPY.getCompanyNumber())
+            .setFilingHistoryDescription(CERTIFIED_COPY.getFilingHistoryDescription())
+            .setFilingHistoryType(CERTIFIED_COPY.getFilingHistoryType())
+            .build();
 
     @Autowired
     private KafkaProducerService serviceUnderTest;
@@ -67,6 +75,7 @@ class KafkaProducerServiceIntegrationTest {
     private SignDigitalDocument messageReceived;
 
     @Configuration
+    @EnableKafka
     static class Config {
 
         @Bean
