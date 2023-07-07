@@ -2,6 +2,8 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.springframework.core.env.Environment;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 
 import java.util.Map;
 
@@ -49,6 +51,14 @@ public class TestUtils {
         variables.set("PAYMENTS_API_URL", "http://api.chs.local:4001");
         variables.set("DOCUMENT_API_LOCAL_URL", "http://document-api-cidev.aws.chdev.org");
         variableValues.forEach(variables::set);
+    }
+
+    public static int noOfRecordsForTopic(ConsumerRecords<?, ?> records, String topic) {
+        int count = 0;
+        for (ConsumerRecord<?, ?> ignored : records.records(topic)) {
+            count++;
+        }
+        return count;
     }
 
 }
