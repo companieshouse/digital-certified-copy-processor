@@ -5,7 +5,7 @@ import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import java.util.Objects;
 
 /**
- * Contains all parameters required by {@link Service service implementations}.
+ * Contains all parameters required by {@link KafkaService service implementations}.
  */
 public class KafkaServiceParameters {
 
