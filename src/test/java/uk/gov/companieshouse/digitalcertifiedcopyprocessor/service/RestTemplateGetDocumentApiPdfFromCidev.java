@@ -15,13 +15,14 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static java.lang.System.getenv;
 import static org.hamcrest.CoreMatchers.not;
@@ -42,7 +43,11 @@ import static wiremock.org.apache.commons.io.FileUtils.copyInputStreamToFile;
  * @deprecated Use {@link GetDocumentApiPdfFromCidev}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes={RestTemplateGetDocumentApiPdfFromCidev.Config.class, TestConfig.class})
+@SpringJUnitConfig(classes={
+        RestTemplateGetDocumentApiPdfFromCidev.Config.class,
+        KafkaConfig.class,
+        TestConfig.class,
+        SignDigitalDocumentFactory.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class RestTemplateGetDocumentApiPdfFromCidev {
 
@@ -91,7 +96,7 @@ class RestTemplateGetDocumentApiPdfFromCidev {
      */
     @Test
     @DisplayName("get document PDF from cidev")
-    void getDocumentPdfFromCidev() throws URISyntaxException, IOException {
+    void getDocumentPdfFromCidev() throws IOException {
 
         // Given
         givenBasicAuthIsConfigured();
@@ -114,7 +119,7 @@ class RestTemplateGetDocumentApiPdfFromCidev {
      */
     @Test
     @DisplayName("get private URI from cidev")
-    void getPrivateUriFromCidev() throws URISyntaxException {
+    void getPrivateUriFromCidev() {
 
         // Given
         givenBasicAuthIsConfigured();

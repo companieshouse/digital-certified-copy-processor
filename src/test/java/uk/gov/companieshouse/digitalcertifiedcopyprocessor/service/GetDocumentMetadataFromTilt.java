@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.logging.Logger;
@@ -25,7 +26,10 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  *  an automated test suite. It is for manual testing only.
  */
 @SpringBootTest
-@SpringJUnitConfig(TestConfig.class)
+@SpringJUnitConfig({FilingHistoryDocumentService.class,
+                    TestConfig.class,
+                    ApiClientService.class,
+                    ApplicationConfiguration.class})
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class GetDocumentMetadataFromTilt {
 
