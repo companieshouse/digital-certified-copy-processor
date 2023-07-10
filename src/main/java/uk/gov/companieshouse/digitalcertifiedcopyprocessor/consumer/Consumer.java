@@ -9,7 +9,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 

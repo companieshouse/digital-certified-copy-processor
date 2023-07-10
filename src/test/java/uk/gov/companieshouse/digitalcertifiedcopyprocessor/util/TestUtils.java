@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import org.springframework.core.env.Environment;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.springframework.core.env.Environment;
 
 import java.util.Map;
 

@@ -1,7 +1,8 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
 
-import javax.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
 
 /**
  * Flags related to the state of an individual message that has been processed.

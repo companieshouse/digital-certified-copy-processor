@@ -20,7 +20,6 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
