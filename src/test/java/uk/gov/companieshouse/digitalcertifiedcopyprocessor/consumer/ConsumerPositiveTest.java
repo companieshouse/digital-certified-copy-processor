@@ -17,12 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
-
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.ConsumerTestConstants.ITEM_ORDERED_CERTIFIED_COPY;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.ConsumerTestConstants.ITEM_ORDERED_CERTIFIED_COPY;
 
 @SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -57,7 +56,7 @@ class ConsumerPositiveTest {
     private CountDownLatch latch;
 
     @MockBean
-    private NullService service;
+    private KafkaService service;
 
     @Test
     void testConsumeFromMainTopic() throws InterruptedException {

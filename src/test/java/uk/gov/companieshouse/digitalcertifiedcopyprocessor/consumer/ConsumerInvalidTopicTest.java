@@ -1,10 +1,5 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.ConsumerTestConstants.ITEM_ORDERED_CERTIFIED_COPY;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -24,6 +19,13 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyP
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.ConsumerTestConstants.ITEM_ORDERED_CERTIFIED_COPY;
 
 @SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

@@ -13,9 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.NonRetryableExceptionService;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
@@ -74,5 +77,11 @@ public class TestConfig {
                         throw new RuntimeException(e);
                     }
                 });
+    }
+
+    @Bean
+    @Primary
+    public KafkaService getService() {
+        return new NonRetryableExceptionService();
     }
 }
