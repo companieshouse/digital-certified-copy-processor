@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -60,6 +63,15 @@ class DocumentServiceIntegrationTest {
     @Configuration
     @ComponentScan(basePackageClasses = DocumentServiceIntegrationTest.class)
     static class Config { }
+
+    @AfterEach
+    void tearDown() {
+        final String[] AllEnvironmentVariableNames =
+                Arrays.stream(EnvironmentVariablesChecker.RequiredEnvironmentVariables.class.getEnumConstants())
+                        .map(Enum::name)
+                        .toArray(String[]::new);
+        environmentVariables.clear(AllEnvironmentVariableNames);
+    }
 
     @Test
     @DisplayName("getPrivateUri() gets the document private URI successfully")
