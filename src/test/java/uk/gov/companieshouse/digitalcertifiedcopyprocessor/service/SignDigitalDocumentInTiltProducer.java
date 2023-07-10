@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +35,9 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants
  * topic in Tilt. This is NOT to be run as part of an automated test suite. It is for manual testing only.
  */
 @SpringBootTest
-@ActiveProfiles("manual")
 @TestPropertySource(properties = "spring.kafka.bootstrap-servers=${KAFKA_IN_TILT_BOOTSTRAP_SERVER_URL}")
+@ActiveProfiles("manual")
+@Tag("manual")
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class SignDigitalDocumentInTiltProducer {
 
