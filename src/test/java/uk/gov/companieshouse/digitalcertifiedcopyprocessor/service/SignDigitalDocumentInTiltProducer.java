@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.digitalcertifiedcopyprocessor.integration;
+package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
