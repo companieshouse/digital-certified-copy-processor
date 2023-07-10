@@ -22,7 +22,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.logging.Logger;
@@ -45,7 +44,6 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants
 @SpringBootTest
 @SpringJUnitConfig(classes={
         ApplicationConfiguration.class,
-        TestConfig.class,
         KafkaConfig.class,
         KafkaProducerService.class,
         SignDigitalDocumentFactory.class,
