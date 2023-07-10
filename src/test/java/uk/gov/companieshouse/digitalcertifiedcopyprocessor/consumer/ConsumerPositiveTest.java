@@ -67,9 +67,9 @@ class ConsumerPositiveTest {
         //when
         testProducer.send(new ProducerRecord<>(
                 "echo", 0, System.currentTimeMillis(), "Key", ITEM_ORDERED_CERTIFIED_COPY));
-//        if (!latch.await(30L, TimeUnit.SECONDS)) {
-//            fail("Timed out waiting for latch");
-//        }
+        if (!latch.await(30L, TimeUnit.SECONDS)) {
+            fail("Timed out waiting for latch");
+        }
 
         //then
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 1);

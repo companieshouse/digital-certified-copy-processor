@@ -18,6 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.NonRetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
@@ -70,9 +71,9 @@ class ConsumerNonRetryableExceptionTest {
         //when
         testProducer.send(new ProducerRecord<>(
                 "echo", 0, System.currentTimeMillis(), "Key", ITEM_ORDERED_CERTIFIED_COPY));
-//        if (!latch.await(30L, TimeUnit.SECONDS)) {
-//            fail("Timed out waiting for latch");
-//        }
+        if (!latch.await(30L, TimeUnit.SECONDS)) {
+            fail("Timed out waiting for latch");
+        }
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
 
         //then

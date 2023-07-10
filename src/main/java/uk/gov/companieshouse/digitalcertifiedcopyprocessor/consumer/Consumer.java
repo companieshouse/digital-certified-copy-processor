@@ -8,6 +8,7 @@ import org.springframework.messaging.Message;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.NullService;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
@@ -18,10 +19,10 @@ import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 @Component
 public class Consumer {
 
-    private final NullService service;
+    private final KafkaService service;
     private final MessageFlags messageFlags;
 
-    public Consumer(NullService service, MessageFlags messageFlags) {
+    public Consumer(KafkaService service, MessageFlags messageFlags) {
         this.service = service;
         this.messageFlags = messageFlags;
     }

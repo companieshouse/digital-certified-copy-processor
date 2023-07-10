@@ -2,8 +2,6 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.ConsumerTestConstants.ITEM_ORDERED_CERTIFIED_COPY;
-//import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.DOCUMENT;
-//import static uk.gov.companieshouse.documentsigningrequestconsumer.Constants.SAME_PARTITION_KEY;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
