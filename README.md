@@ -18,3 +18,4 @@
 | Path                                              | Method | Description                                                         |
 |---------------------------------------------------|--------|---------------------------------------------------------------------|
 | *`/digital-certified-copy-processor/healthcheck`* | GET    | Returns HTTP OK (`200`) to indicate a healthy application instance. |
+
