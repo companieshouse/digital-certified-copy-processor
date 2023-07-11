@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
@@ -39,6 +40,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  * Integration tests the {@link DocumentService}.
  */
 @SpringBootTest
+@EmbeddedKafka
 @SpringJUnitConfig(classes={DocumentServiceIntegrationTest.Config.class, TestConfig.class})
 @AutoConfigureWireMock(port = 0)
 class DocumentServiceIntegrationTest {
