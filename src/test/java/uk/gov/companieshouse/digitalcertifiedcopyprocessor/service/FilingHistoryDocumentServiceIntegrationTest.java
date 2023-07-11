@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.tomakehurst.wiremock.http.Fault;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
@@ -14,11 +16,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
@@ -28,17 +33,14 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.Environme
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Error;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.Arrays;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -57,6 +59,15 @@ class FilingHistoryDocumentServiceIntegrationTest {
 
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
+
+    @MockBean
+    KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
+    @MockBean
+    KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
+    @MockBean
+    ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
+    @MockBean
+    ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
