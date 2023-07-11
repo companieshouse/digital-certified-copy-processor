@@ -18,6 +18,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <kafka-models.version>1.0.33</kafka-models.version>
+        <handlebars.version>4.3.1</handlebars.version>
         <ch-kafka.version>1.4.8</ch-kafka.version>
         <start-class>uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication</start-class>
 
@@ -102,6 +103,18 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>${handlebars.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars-helpers</artifactId>
+            <version>${handlebars.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
