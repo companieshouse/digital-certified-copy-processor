@@ -1,13 +1,22 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.Consumer;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
 import java.util.Arrays;
 
@@ -21,10 +30,23 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.En
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
 
 @SpringBootTest
+@EmbeddedKafka
 @SpringJUnitConfig(TestConfig.class)
 class EnvironmentVariablesCheckerTest {
 
     private static final String TOKEN_VALUE = "token value";
+
+    @MockBean
+    KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
+    @MockBean
+    KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
+    @MockBean
+    ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
+    @MockBean
+    ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
+
+    @MockBean
+    Consumer consumer;
 
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
