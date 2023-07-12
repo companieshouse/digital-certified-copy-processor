@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.ITEM_ORDERED_CERTIFIED_COPY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 
 @SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -60,7 +60,7 @@ class ConsumerInvalidTopicTest {
                         0,
                         System.currentTimeMillis(),
                         "key",
-                        ITEM_ORDERED_CERTIFIED_COPY));
+                        CERTIFIED_COPY));
         future.get();
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
 

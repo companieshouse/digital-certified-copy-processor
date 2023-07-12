@@ -1,5 +1,7 @@
 # digital-certified-copy-processor
-Consumes messages from the `item-ordered-certified-copy` Kafka topic.
+
+* Consumes messages from the `item-ordered-certified-copy` Kafka topic.
+* Produces messages to the `sign-digital-document` Kafka topic.
 
 ## Environment variables
 
@@ -14,9 +16,11 @@ Consumes messages from the `item-ordered-certified-copy` Kafka topic.
 | CONCURRENT_LISTENER_INSTANCES             | The number of consumers that should participate in the consumer group. Must be equal to the number of main topic partitions. | ✓         | chs-configs repo environment global_env |
 | ITEM_ORDERED_CERTIFIED_COPY_TOPIC         | The topic from which the main consumer will consume `item-ordered-certified-copy` messages.                                  | ✓         | chs-configs repo environment global_env |
 | BOOTSTRAP_SERVER_URL                      | The URLs of the Kafka brokers that the consumers will connect to.                                                            | ✓         | chs-configs repo environment global_env |
-
+| PAYMENTS_API_URL            | Payments API URL                        | ✓         | chs-configs repo environment global_env |
+| SIGN_DIGITAL_DOCUMENT_TOPIC | The topic this app produces messages to | ✓         | chs-configs repo environment env        |
 ## Endpoints
 
 | Path                                              | Method | Description                                                         |
 |---------------------------------------------------|--------|---------------------------------------------------------------------|
 | *`/digital-certified-copy-processor/healthcheck`* | GET    | Returns HTTP OK (`200`) to indicate a healthy application instance. |
+

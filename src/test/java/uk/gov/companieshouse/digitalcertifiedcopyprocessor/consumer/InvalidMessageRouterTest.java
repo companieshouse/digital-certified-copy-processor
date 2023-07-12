@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.ITEM_ORDERED_CERTIFIED_COPY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 
 @ExtendWith(MockitoExtension.class)
 class InvalidMessageRouterTest {
@@ -33,20 +33,20 @@ class InvalidMessageRouterTest {
     void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
         // given
         ProducerRecord<String, ItemOrderedCertifiedCopy> message =
-                new ProducerRecord<>("main", "key", ITEM_ORDERED_CERTIFIED_COPY);
+                new ProducerRecord<>("main", "key", CERTIFIED_COPY);
 
         // when
         ProducerRecord<String, ItemOrderedCertifiedCopy> actual = invalidMessageRouter.onSend(message);
 
         // then
-        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", ITEM_ORDERED_CERTIFIED_COPY))));
+        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", CERTIFIED_COPY))));
     }
 
     @Test
     void testOnSendRoutesMessageToTargetTopicIfRetryableExceptionThrown() {
         // given
         ProducerRecord<String, ItemOrderedCertifiedCopy> message =
-                new ProducerRecord<>("main", "key", ITEM_ORDERED_CERTIFIED_COPY);
+                new ProducerRecord<>("main", "key", CERTIFIED_COPY);
         when(flags.isRetryable()).thenReturn(true);
 
         // when
