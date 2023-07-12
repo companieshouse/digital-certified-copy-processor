@@ -28,7 +28,13 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.En
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CHS_API_KEY;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.DOCUMENT_API_LOCAL_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.PAYMENTS_API_URL;
-
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.INVALID_ITEM_ORDERED_CERTIFIED_COPY_TOPIC;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BACKOFF_DELAY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.GROUP_ID;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_LISTENER_INSTANCES;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.ITEM_ORDERED_CERTIFIED_COPY_TOPIC;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
 @SpringBootTest
 @EmbeddedKafka
 @SpringJUnitConfig(TestConfig.class)
@@ -90,6 +96,48 @@ class EnvironmentVariablesCheckerTest {
     @Test
     void checkEnvironmentVariablesAllPresentReturnsFalseIfDocumentApiLocalUrlMissing() {
         populateAllVariablesExceptOneAndAssertSomethingMissing(DOCUMENT_API_LOCAL_URL);
+    }
+
+    @DisplayName("returns false if BACKOFF_DELAY is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfBackoffDelayMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(BACKOFF_DELAY);
+    }
+
+    @DisplayName("returns false if GROUP_ID is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfGroupIdMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(GROUP_ID);
+    }
+
+    @DisplayName("returns false if INVALID_ITEM_ORDERED_CERTIFIED_COPY_TOPIC is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfInvalidItemOrderedCertifiedCopyTopicMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(INVALID_ITEM_ORDERED_CERTIFIED_COPY_TOPIC);
+    }
+
+    @DisplayName("returns false if MAX_ATTEMPTS is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfMaxAttemptsMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(MAX_ATTEMPTS);
+    }
+
+    @DisplayName("returns false if CONCURRENT_LISTENER_INSTANCES is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfConcurrentListenerInstancesMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(CONCURRENT_LISTENER_INSTANCES);
+    }
+
+    @DisplayName("returns false if ITEM_ORDERED_CERTIFIED_COPY_TOPIC is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfItemOrderedCertifiedCopyTopicMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(ITEM_ORDERED_CERTIFIED_COPY_TOPIC);
+    }
+
+    @DisplayName("returns false if BOOTSTRAP_SERVER_URL is missing")
+    @Test
+    void checkEnvironmentVariablesAllPresentReturnsFalseIfBootstrapServerUrlMissing() {
+        populateAllVariablesExceptOneAndAssertSomethingMissing(BOOTSTRAP_SERVER_URL);
     }
 
     private void populateAllVariablesExceptOneAndAssertSomethingMissing(
