@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.ITEM_ORDERED_CERTIFIED_COPY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 
 @SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -70,7 +70,7 @@ class ConsumerRetryableExceptionTest {
 
         //when
         testProducer.send(new ProducerRecord<>(
-                "echo", 0, System.currentTimeMillis(), "key", ITEM_ORDERED_CERTIFIED_COPY));
+                "echo", 0, System.currentTimeMillis(), "key", CERTIFIED_COPY));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
@@ -81,6 +81,6 @@ class ConsumerRetryableExceptionTest {
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(3));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-invalid"), is(0));
-        verify(service, times(4)).processMessage(new KafkaServiceParameters(ITEM_ORDERED_CERTIFIED_COPY));
+        verify(service, times(4)).processMessage(new KafkaServiceParameters(CERTIFIED_COPY));
     }
 }
