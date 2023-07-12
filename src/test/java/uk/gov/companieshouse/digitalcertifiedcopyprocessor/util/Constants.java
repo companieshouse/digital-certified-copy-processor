@@ -1,7 +1,11 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
+import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 public class Constants {
 
@@ -37,15 +41,43 @@ public class Constants {
 
     public static final URI EXPECTED_PUBLIC_DOCUMENT_URI;
     public static final URI EXPECTED_PRIVATE_DOCUMENT_URI;
+    public static final URI PRIVATE_DOCUMENT_URI;
     static {
         try {
             EXPECTED_PUBLIC_DOCUMENT_URI = new URI(PUBLIC_DOCUMENT_URI);
             EXPECTED_PRIVATE_DOCUMENT_URI = new URI(
                     "s3://document-api-images-cidev/docs/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0/application-pdf");
+            PRIVATE_DOCUMENT_URI = EXPECTED_PRIVATE_DOCUMENT_URI;
         } catch (URISyntaxException e) {
             // This will not happen.
             throw new RuntimeException(e);
         }
     }
+
+    public static final SignDigitalDocument DOCUMENT = SignDigitalDocument.newBuilder()
+            .setOrderNumber("ORD-152416-079544")
+            .setPrivateS3Location("s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf")
+            .setDocumentType("363s")
+            .setItemGroup("ORD-152416-079544-1")
+            .setCompanyName("Test Company")
+            .setCompanyNumber("00000000")
+            .setFilingHistoryDescription("A test filing history document")
+            .setFilingHistoryType("AM01")
+            .build();
+
+    public static final ItemOrderedCertifiedCopy CERTIFIED_COPY = ItemOrderedCertifiedCopy.newBuilder()
+            .setOrderNumber("ORD-152416-079544")
+            .setItemId("CCD-768116-517930")
+            .setGroupItem("/item-groups/IG-000216-873460/items/CCD-768116-517930")
+            .setCompanyName("Test Company Limited")
+            .setCompanyNumber("00006400")
+            .setFilingHistoryDescription("appoint-person-director-company-with-name-date")
+            .setFilingHistoryId("OTYyMTM3NjgxOGFkaXF6a2N4")
+            .setFilingHistoryType("AP01")
+            .setFilingHistoryDescriptionValues(Map.of(
+                    "appointment_date", "2023-05-01",
+                    "officer_name", "Mr Tom Sunburn"))
+            .build();
+
 
 }

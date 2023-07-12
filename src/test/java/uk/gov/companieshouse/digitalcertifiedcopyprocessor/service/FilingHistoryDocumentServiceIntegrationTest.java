@@ -22,10 +22,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPrivateUriConverter;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.ApiErrorResponsePayload;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Error;
 import uk.gov.companieshouse.logging.Logger;
@@ -51,7 +53,10 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils
  * Integration tests the {@link FilingHistoryDocumentService}.
  */
 @SpringBootTest
-@SpringJUnitConfig(classes={FilingHistoryDocumentServiceIntegrationTest.Config.class, TestConfig.class})
+@SpringJUnitConfig(classes={FilingHistoryDocumentServiceIntegrationTest.Config.class,
+                            TestConfig.class,
+                            KafkaConfig.class,
+                            SignDigitalDocumentFactory.class})
 @AutoConfigureWireMock(port = 0)
 class FilingHistoryDocumentServiceIntegrationTest {
 

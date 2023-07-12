@@ -3,10 +3,12 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 
 @SpringBootTest
+@EmbeddedKafka
 @SpringJUnitConfig(TestConfig.class)
 class DigitalCertifiedCopyProcessorApplicationTests {
 
