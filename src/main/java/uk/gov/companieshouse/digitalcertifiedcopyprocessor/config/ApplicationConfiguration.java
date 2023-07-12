@@ -31,7 +31,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifi
 public class ApplicationConfiguration {
 
     @Bean
-    public ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+    public ConsumerFactory<String, ItemOrderedCertifiedCopy> ItemOrderedconsumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return new DefaultKafkaConsumerFactory<>(
                 Map.of(
                         ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
@@ -46,7 +46,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory(
+    public ProducerFactory<String, ItemOrderedCertifiedCopy> ItemOrderedProducerFactory(
             @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
             MessageFlags messageFlags,
             @Value("${invalid_message_topic}") String invalidMessageTopic) {
@@ -77,12 +77,12 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, ItemOrderedCertifiedCopy> kafkaTemplate(ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory) {
+    public KafkaTemplate<String, ItemOrderedCertifiedCopy> ItemOrderedKafkaTemplate(ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ItemOrderedCertifiedCopy> kafkaListenerContainerFactory(ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory,
+    public ConcurrentKafkaListenerContainerFactory<String, ItemOrderedCertifiedCopy> ItemOrderedKafkaListenerContainerFactory(ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory,
                                                                                                  @Value("${consumer.concurrency}") Integer concurrency) {
         ConcurrentKafkaListenerContainerFactory<String, ItemOrderedCertifiedCopy> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
