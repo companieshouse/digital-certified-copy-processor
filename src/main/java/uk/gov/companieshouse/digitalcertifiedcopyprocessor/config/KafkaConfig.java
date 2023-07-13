@@ -18,7 +18,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public ProducerFactory<String, SignDigitalDocument> producerFactory(
+    public ProducerFactory<String, SignDigitalDocument> signProducerFactory(
             @Value("${spring.kafka.bootstrap-servers}" ) final String bootstrapServers) {
         final Map<String, Object> config = new HashMap<>();
         config.put(
@@ -30,9 +30,9 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, SignDigitalDocument> kafkaTemplate(
+    public KafkaTemplate<String, SignDigitalDocument> signKafkaTemplate(
             @Value("${spring.kafka.bootstrap-servers}" ) final String bootstrapServers) {
-        return new KafkaTemplate<>(producerFactory(bootstrapServers));
+        return new KafkaTemplate<>(signProducerFactory(bootstrapServers));
     }
 
     @Bean
