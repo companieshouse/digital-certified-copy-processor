@@ -77,7 +77,7 @@ class KafkaProducerServiceIntegrationTest {
     static class Config {
 
         @Bean
-        public ConsumerFactory<String, SignDigitalDocument> consumerFactory(
+        public ConsumerFactory<String, SignDigitalDocument> integrationConsumerFactory(
                 @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
             return new DefaultKafkaConsumerFactory<>(
                     Map.of(
@@ -93,7 +93,7 @@ class KafkaProducerServiceIntegrationTest {
         }
 
         @Bean
-        public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> kafkaListenerContainerFactory(
+        public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> integrationKafkaListenerContainerFactory(
                 ConsumerFactory<String, SignDigitalDocument> consumerFactory) {
             ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory =
                     new ConcurrentKafkaListenerContainerFactory<>();
