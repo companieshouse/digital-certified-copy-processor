@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -22,6 +23,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
+import uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.MessageFlags;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.logging.Logger;
@@ -43,7 +45,6 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants
  */
 @SpringBootTest
 @SpringJUnitConfig(classes={
-        ApplicationConfiguration.class,
         KafkaConfig.class,
         KafkaProducerService.class,
         SignDigitalDocumentFactory.class,
@@ -68,6 +69,12 @@ class KafkaProducerServiceIntegrationTest {
 
     @Autowired
     private KafkaProducerService serviceUnderTest;
+
+    @MockBean
+    private Logger logger;
+
+    @MockBean
+    MessageFlags messageFlags;
 
     private final CountDownLatch messageReceivedLatch = new CountDownLatch(1);
     private SignDigitalDocument messageReceived;
