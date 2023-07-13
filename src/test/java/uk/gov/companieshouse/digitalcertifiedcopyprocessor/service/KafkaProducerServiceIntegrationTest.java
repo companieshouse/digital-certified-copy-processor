@@ -45,7 +45,6 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants
  */
 @SpringBootTest
 @SpringJUnitConfig(classes={
-        ApplicationConfiguration.class,
         KafkaConfig.class,
         KafkaProducerService.class,
         SignDigitalDocumentFactory.class,
@@ -72,7 +71,11 @@ class KafkaProducerServiceIntegrationTest {
     private KafkaProducerService serviceUnderTest;
 
     @MockBean
+    private Logger logger;
+
+    @MockBean
     MessageFlags messageFlags;
+
     private final CountDownLatch messageReceivedLatch = new CountDownLatch(1);
     private SignDigitalDocument messageReceived;
 
@@ -81,7 +84,7 @@ class KafkaProducerServiceIntegrationTest {
     static class Config {
 
         @Bean
-        public ConsumerFactory<String, SignDigitalDocument> integrationConsumerFactory(
+        public ConsumerFactory<String, SignDigitalDocument> consumerFactory(
                 @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
             return new DefaultKafkaConsumerFactory<>(
                     Map.of(
@@ -97,7 +100,7 @@ class KafkaProducerServiceIntegrationTest {
         }
 
         @Bean
-        public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> integrationKafkaListenerContainerFactory(
+        public ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> kafkaListenerContainerFactory(
                 ConsumerFactory<String, SignDigitalDocument> consumerFactory) {
             ConcurrentKafkaListenerContainerFactory<String, SignDigitalDocument> factory =
                     new ConcurrentKafkaListenerContainerFactory<>();
