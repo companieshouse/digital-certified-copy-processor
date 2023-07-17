@@ -1,12 +1,13 @@
-package uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer;
+package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.NonRetryableException;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceParameters;
 
+/**
+ * The default service.
+ */
 @Component
-public class NonRetryableExceptionService implements KafkaService {
+class NullService implements KafkaService {
 
     @Override
     public void processMessage(KafkaServiceParameters parameters) {
