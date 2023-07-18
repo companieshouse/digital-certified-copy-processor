@@ -2,12 +2,12 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
@@ -26,8 +26,8 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants
  * of an automated test suite. It is for manual testing only.
  */
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @TestPropertySource(locations="classpath:item-ordered-certified-copy-in-tilt.properties")
+@Tag("manual")
 @Import(TestConfig.class)
 @SuppressWarnings("squid:S3577") // This is NOT to be run as part of an automated test suite.
 class ItemOrderedCertifiedCopyInTiltProducer {
