@@ -29,6 +29,9 @@ class CertifiedCopyProcessorService implements KafkaService {
         // Note MessageLoggingAspect has already done a good job of logging incoming message.
 
         final var certifiedCopy = parameters.getData();
+
+        // TODO DCAC-260 Testing of this in Tilt suggests we are getting the wrong
+        // document metadata. Suspect this is due to DCAC-262.
         final var documentMetadata = filingHistoryDocumentService.getDocumentMetadata(
                 certifiedCopy.getCompanyNumber(),
                 certifiedCopy.getFilingHistoryId());

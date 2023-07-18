@@ -44,9 +44,9 @@ class GetDocumentMetadataFromTilt {
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-    private static final String COMPANY_NUMBER = "00006400";
-    private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
-    private static final String EXPECTED_DOCUMENT_METADATA = "/document/specimen";
+    private static final String COMPANY_NUMBER = "OC421572";
+    private static final String ID_1 = "OTYxNjg0ODc0MmFkaXF6a2N4";
+    private static final String EXPECTED_DOCUMENT_METADATA = "/document/8aHT0DH-xdZc6WKGCNXBTDRiAlrSj08FEnRaCRTTIHI";
 
     @Autowired
     private FilingHistoryDocumentService serviceUnderTest;
@@ -86,6 +86,7 @@ class GetDocumentMetadataFromTilt {
         logger.info("Document metadata returned = " + metadata);
 
         // Then
+        // TODO DCAC-260: This test is probably failing due to DCAC-262.
         assertThat(metadata, is(EXPECTED_DOCUMENT_METADATA));
     }
 
