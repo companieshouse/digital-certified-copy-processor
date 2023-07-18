@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY_2;
 
 /**
  * "Test" class re-purposed to produce {@link ItemOrderedCertifiedCopy} messages to the
@@ -48,11 +48,11 @@ class ItemOrderedCertifiedCopyInTiltProducer {
     @Test
     void produceMessageToTilt() throws InterruptedException, ExecutionException, TimeoutException {
         final var future = testProducer.send(new ProducerRecord<>(
-                itemOrderedCertifiedCopyTopic, 0, System.currentTimeMillis(), SAME_PARTITION_KEY, CERTIFIED_COPY));
+                itemOrderedCertifiedCopyTopic, 0, System.currentTimeMillis(), SAME_PARTITION_KEY, CERTIFIED_COPY_2));
         final var result = future.get(MESSAGE_WAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
         final var partition = result.partition();
         final var offset = result.offset();
-        LOGGER.info("Message " + CERTIFIED_COPY + " delivered to topic " + itemOrderedCertifiedCopyTopic
+        LOGGER.info("Message " + CERTIFIED_COPY_2 + " delivered to topic " + itemOrderedCertifiedCopyTopic
                 + " on partition " + partition + " with offset " + offset + ".");
     }
 
