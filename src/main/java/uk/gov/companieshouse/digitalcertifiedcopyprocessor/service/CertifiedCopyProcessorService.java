@@ -1,10 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
-
-import java.net.URI;
 
 /**
  * Consumes a {@link uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy} message
