@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
+
+import java.net.URI;
 
 /**
  * Consumes a {@link uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy} message
@@ -26,28 +29,14 @@ class CertifiedCopyProcessorService implements KafkaService {
     @Override
     public void processMessage(KafkaServiceParameters parameters) {
 
-        // Note MessageLoggingAspect has already done a good job of logging incoming message.
-
         final var certifiedCopy = parameters.getData();
 
-        // TODO DCAC-260 Testing of this in Tilt suggests we are getting the wrong
-        // document metadata. Suspect this is due to DCAC-262.
         final var documentMetadata = filingHistoryDocumentService.getDocumentMetadata(
                 certifiedCopy.getCompanyNumber(),
                 certifiedCopy.getFilingHistoryId());
 
-        // TODO DCAC-260 Structure or remove
-        logger.info("Document metadata: " + documentMetadata);
-
-        // TODO DCAC-260 The code below this point has not even been manually tested
-        // in this integration context as yet.
-
         final var privateUri = documentService.getPrivateUri(documentMetadata);
 
-        // TODO DCAC-260 Structure or remove
-        logger.info("Private URI: " + privateUri);
-
         kafkaProducerService.sendMessage(certifiedCopy, privateUri);
-
     }
 }
