@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.AfterEach;
@@ -8,10 +10,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.util.Arrays;
@@ -38,15 +44,24 @@ class GetDocumentMetadataFromTilt {
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-    private static final String COMPANY_NUMBER = "00006400";
-    private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
-    private static final String EXPECTED_DOCUMENT_METADATA = "/document/specimen";
+    private static final String COMPANY_NUMBER = "OC421572";
+    private static final String ID_1 = "OTYxNjg0ODc0MmFkaXF6a2N4";
+    private static final String EXPECTED_DOCUMENT_METADATA = "/document/8aHT0DH-xdZc6WKGCNXBTDRiAlrSj08FEnRaCRTTIHI";
 
     @Autowired
     private FilingHistoryDocumentService serviceUnderTest;
 
     @Autowired
     private Logger logger;
+
+    @MockBean
+    private KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
+    @MockBean
+    private KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
+    @MockBean
+    private ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
+    @MockBean
+    private ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
 
     @AfterEach
     void tearDown() {
@@ -71,6 +86,7 @@ class GetDocumentMetadataFromTilt {
         logger.info("Document metadata returned = " + metadata);
 
         // Then
+        // TODO DCAC-260: This test is probably failing due to DCAC-262.
         assertThat(metadata, is(EXPECTED_DOCUMENT_METADATA));
     }
 

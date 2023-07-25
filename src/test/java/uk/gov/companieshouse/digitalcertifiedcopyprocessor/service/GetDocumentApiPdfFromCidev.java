@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
@@ -7,9 +9,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
@@ -21,6 +26,7 @@ import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsPro
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
+import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.File;
@@ -67,6 +73,15 @@ class GetDocumentApiPdfFromCidev {
 
     @Autowired
     private S3Client s3Client;
+
+    @MockBean
+    private KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
+    @MockBean
+    private KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
+    @MockBean
+    private ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
+    @MockBean
+    private ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
 
     @Configuration
     @ComponentScan(basePackageClasses = GetDocumentApiPdfFromCidev.class)

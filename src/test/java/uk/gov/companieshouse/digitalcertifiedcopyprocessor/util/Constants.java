@@ -79,5 +79,20 @@ public class Constants {
                     "officer_name", "Mr Tom Sunburn"))
             .build();
 
+    // TODO DCAC-260 Can we rationalise this?
+    public static final ItemOrderedCertifiedCopy CERTIFIED_COPY_2 = ItemOrderedCertifiedCopy.newBuilder()
+            .setOrderNumber("ORD-152416-079544")
+            .setItemId("CCD-768116-517930")
+            .setGroupItem("/item-groups/IG-000216-873460/items/CCD-768116-517930")
+            .setCompanyName("Test Company Limited")
+            .setCompanyNumber("00006400")
+            .setFilingHistoryDescription("appoint-person-director-company-with-name-date")
+            .setFilingHistoryId("MDA3MjAxMzc0MmFkaXF6a2N4")
+            .setFilingHistoryType("AP01")
+            .setFilingHistoryDescriptionValues(Map.of(
+                    "appointment_date", "2023-05-01",
+                    "officer_name", "Mr Tom Sunburn"))
+            .build();
+
 
 }
