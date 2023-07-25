@@ -55,6 +55,7 @@ class KafkaProducerServiceIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("KafkaProducerServiceIntegrationTest");
     private static final String SIGN_DIGITAL_DOCUMENT_TOPIC = "sign-digital-document";
+    private static final String FILING_HISTORY_DESCRIPTION = "**Resignation of a liquidator**";
     private static final int MESSAGE_WAIT_TIMEOUT_SECONDS = 10;
     private static final SignDigitalDocument EXPECTED_SIGN_DIGITAL_DOCUMENT_MESSAGE = SignDigitalDocument.newBuilder()
             .setOrderNumber(CERTIFIED_COPY.getOrderNumber())
@@ -115,7 +116,7 @@ class KafkaProducerServiceIntegrationTest {
     @DisplayName("KafkaProducerService produces a message to sign-digital-document successfully")
     void producesMessageSuccessfully() throws InterruptedException {
 
-        serviceUnderTest.sendMessage(CERTIFIED_COPY, PRIVATE_DOCUMENT_URI);
+        serviceUnderTest.sendMessage(CERTIFIED_COPY, PRIVATE_DOCUMENT_URI, FILING_HISTORY_DESCRIPTION);
 
         verifyExpectedMessageIsReceived();
     }
