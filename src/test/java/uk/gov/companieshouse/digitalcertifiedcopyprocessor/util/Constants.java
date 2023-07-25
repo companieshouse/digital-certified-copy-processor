@@ -79,7 +79,6 @@ public class Constants {
                     "officer_name", "Mr Tom Sunburn"))
             .build();
 
-    // TODO DCAC-260 Can we rationalise this?
     public static final ItemOrderedCertifiedCopy CERTIFIED_COPY_2 = ItemOrderedCertifiedCopy.newBuilder()
             .setOrderNumber("ORD-152416-079544")
             .setItemId("CCD-768116-517930")

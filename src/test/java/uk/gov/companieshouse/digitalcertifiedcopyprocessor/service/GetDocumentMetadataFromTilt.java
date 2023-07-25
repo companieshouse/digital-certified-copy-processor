@@ -85,8 +85,6 @@ class GetDocumentMetadataFromTilt {
 
         logger.info("Document metadata returned = " + metadata);
 
-        // Then
-        // TODO DCAC-260: This test is probably failing due to DCAC-262.
         assertThat(metadata, is(EXPECTED_DOCUMENT_METADATA));
     }
 
