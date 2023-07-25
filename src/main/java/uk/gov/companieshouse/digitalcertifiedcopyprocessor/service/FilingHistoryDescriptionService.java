@@ -2,6 +2,7 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.companieshouse.logging.Logger;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+@Service
 public class FilingHistoryDescriptionService {
 
     private final Logger logger;
