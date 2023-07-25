@@ -49,7 +49,7 @@ public class CertifiedCopyProcessorServiceTest {
                 .thenReturn(documentMetadata);
         when(documentService.getPrivateUri(documentMetadata)).thenReturn(privateUri);
         when(filingHistoryDescriptionService.getDescription(certifiedCopy.getFilingHistoryDescription()))
-                .thenReturn("");
+                .thenReturn(convertedFilingHistoryDescription);
 
         //call the processor service
         certifiedCopyProcessorService.processMessage(new KafkaServiceParameters(certifiedCopy));

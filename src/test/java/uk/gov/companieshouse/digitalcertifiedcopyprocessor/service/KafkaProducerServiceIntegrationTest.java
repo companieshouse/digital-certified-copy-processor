@@ -64,7 +64,7 @@ class KafkaProducerServiceIntegrationTest {
             .setItemGroup(CERTIFIED_COPY.getGroupItem())
             .setCompanyName(CERTIFIED_COPY.getCompanyName())
             .setCompanyNumber(CERTIFIED_COPY.getCompanyNumber())
-            .setFilingHistoryDescription(CERTIFIED_COPY.getFilingHistoryDescription())
+            .setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION)
             .setFilingHistoryType(CERTIFIED_COPY.getFilingHistoryType())
             .build();
 
