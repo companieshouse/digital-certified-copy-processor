@@ -35,14 +35,14 @@ public class KafkaProducerService {
         this.signDigitalDocumentTopic = signDigitalDocumentTopic;
     }
 
-    public void sendMessage(final ItemOrderedCertifiedCopy certifiedCopy, final URI privateUri) {
+    public void sendMessage(final ItemOrderedCertifiedCopy certifiedCopy, final URI privateUri, final String filingHistoryDescription) {
 
         final var itemId = certifiedCopy.getItemId();
         final var orderNumber = certifiedCopy.getOrderNumber();
         logger.info("Sending a message for certified copy ID " + itemId + " from order " + orderNumber + ".",
                 getLogMap(itemId, orderNumber));
 
-        final var message = signDigitalDocumentFactory.buildMessage(certifiedCopy, privateUri);
+        final var message = signDigitalDocumentFactory.buildMessage(certifiedCopy, privateUri, filingHistoryDescription);
         final var future = kafkaTemplate.send(signDigitalDocumentTopic, message);
         future.addCallback(new ListenableFutureCallback<>() {
             @Override
