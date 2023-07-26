@@ -38,8 +38,11 @@ public class FilingHistoryDescriptionService {
     }
 
     public String getDescription(String DescriptionCode) {
-        //if we can't match the description, just pass along an empty string
+        //if the Filing History Descriptions failed to load from the file, return an empty string
+        if (filingHistoryDescriptions.isEmpty())
+            return "";
          String convertedDescription = filingHistoryDescriptions.get(DescriptionCode);
+        //if we can't match the description, just pass along an empty string
          if (convertedDescription == null) {
              String errorMessage = String.format("Description not found for FilingHistoryDescription code: " +
                              "'%s' Defaulting to an empty string", DescriptionCode);
