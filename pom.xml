@@ -20,6 +20,7 @@
         <kafka-models.version>1.0.33</kafka-models.version>
         <handlebars.version>4.3.1</handlebars.version>
         <ch-kafka.version>1.4.8</ch-kafka.version>
+        <snakeyaml.version>1.30</snakeyaml.version>
         <start-class>uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication</start-class>
 
         <!-- Spring boot config -->
@@ -195,6 +196,11 @@
             <artifactId>handlebars</artifactId>
             <version>${handlebars.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.jknack</groupId>

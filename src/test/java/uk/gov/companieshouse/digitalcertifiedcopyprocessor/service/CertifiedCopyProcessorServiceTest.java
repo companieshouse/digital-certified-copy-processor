@@ -30,6 +30,9 @@ public class CertifiedCopyProcessorServiceTest {
     @Mock
     private KafkaProducerService kafkaProducerService;
 
+    @Mock
+    private FilingHistoryDescriptionService filingHistoryDescriptionService;
+
     @InjectMocks
     private CertifiedCopyProcessorService certifiedCopyProcessorService;
 
@@ -37,13 +40,16 @@ public class CertifiedCopyProcessorServiceTest {
     public void testProcessMessage() throws URISyntaxException {
         //Prepare test data
         ItemOrderedCertifiedCopy certifiedCopy = CERTIFIED_COPY;
-        String documentMetadata = "egg";
+        String documentMetadata = "data that is meta";
+        String convertedFilingHistoryDescription = "a very good description";
         URI privateUri = new URI("private_uri");
 
         //Mock behaviour of the dependencies
         when(filingHistoryDocumentService.getDocumentMetadata(anyString(), anyString()))
                 .thenReturn(documentMetadata);
         when(documentService.getPrivateUri(documentMetadata)).thenReturn(privateUri);
+        when(filingHistoryDescriptionService.getDescription(certifiedCopy.getFilingHistoryDescription()))
+                .thenReturn(convertedFilingHistoryDescription);
 
         //call the processor service
         certifiedCopyProcessorService.processMessage(new KafkaServiceParameters(certifiedCopy));
@@ -51,6 +57,6 @@ public class CertifiedCopyProcessorServiceTest {
         //Verify that the methods of the dependencies were called with the correct parameters
         verify(filingHistoryDocumentService).getDocumentMetadata(certifiedCopy.getCompanyNumber(), certifiedCopy.getFilingHistoryId());
         verify(documentService).getPrivateUri(documentMetadata);
-        verify(kafkaProducerService).sendMessage(certifiedCopy, privateUri);
+        verify(kafkaProducerService).sendMessage(certifiedCopy, privateUri, convertedFilingHistoryDescription);
     }
 }

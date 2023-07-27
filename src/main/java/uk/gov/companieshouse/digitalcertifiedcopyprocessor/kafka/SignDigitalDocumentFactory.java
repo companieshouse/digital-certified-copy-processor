@@ -11,7 +11,8 @@ public class SignDigitalDocumentFactory {
 
     private static final String CERTIFIED_COPY_DOCUMENT_TYPE = "certified-copy";
 
-    public SignDigitalDocument buildMessage(final ItemOrderedCertifiedCopy certifiedCopy, final URI privateUri) {
+    public SignDigitalDocument buildMessage(final ItemOrderedCertifiedCopy certifiedCopy, final URI privateUri,
+                                            final String filingHistoryDescription) {
         return SignDigitalDocument.newBuilder()
                 .setPrivateS3Location(privateUri.toString())
                 .setDocumentType(CERTIFIED_COPY_DOCUMENT_TYPE)
@@ -19,7 +20,7 @@ public class SignDigitalDocumentFactory {
                 .setOrderNumber(certifiedCopy.getOrderNumber())
                 .setCompanyName(certifiedCopy.getCompanyName())
                 .setCompanyNumber(certifiedCopy.getCompanyNumber())
-                .setFilingHistoryDescription(certifiedCopy.getFilingHistoryDescription())
+                .setFilingHistoryDescription(filingHistoryDescription)
                 .setFilingHistoryType(certifiedCopy.getFilingHistoryType())
                 .build();
     }
