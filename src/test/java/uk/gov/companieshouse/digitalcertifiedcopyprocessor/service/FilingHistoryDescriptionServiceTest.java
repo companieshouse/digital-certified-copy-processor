@@ -55,7 +55,7 @@ public class FilingHistoryDescriptionServiceTest {
         Resource mockFileResource = mock(Resource.class);
         when(mockFileResource.getInputStream()).thenThrow(new IOException());
         FilingHistoryDescriptionService filingHistoryDescriptionServiceNotFound = new FilingHistoryDescriptionService(mockFileResource, logger);
-        String result = filingHistoryDescriptionService.getDescription("corn on the cob");
+        String result = filingHistoryDescriptionServiceNotFound.getDescription("corn on the cob");
         assertEquals("", result);
     }
 }

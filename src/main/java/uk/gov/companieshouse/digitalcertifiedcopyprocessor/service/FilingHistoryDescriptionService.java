@@ -39,8 +39,10 @@ public class FilingHistoryDescriptionService {
 
     public String getDescription(String descriptionCode) {
         //if the Filing History Descriptions failed to load from the file, return an empty string
-        if (filingHistoryDescriptions.isEmpty())
+        if (filingHistoryDescriptions == null || filingHistoryDescriptions.isEmpty()){
+            logger.info("filingHistoryDescriptions map loaded from api-enumerations is null or empty, returning empty string");
             return "";
+        }
          String convertedDescription = filingHistoryDescriptions.get(descriptionCode);
         //if we can't match the description, just pass along an empty string
          if (convertedDescription == null) {
