@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import uk.gov.companieshouse.logging.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,7 @@ public class FilingHistoryDescriptionServiceTest {
 
     @BeforeEach
     public void setUp(){
-        Resource testFileResource = new ClassPathResource("test_filing_history_descriptions.yml");
+        File testFileResource = new File("test_filing_history_descriptions.yml");
         filingHistoryDescriptionService = new FilingHistoryDescriptionService(testFileResource, logger);
     }
 
@@ -52,8 +52,8 @@ public class FilingHistoryDescriptionServiceTest {
     @Test
     @Description("When the api-enumerations file is failed to load, we should just return an empty string")
     public void testFileNotFound() throws IOException {
-        Resource mockFileResource = mock(Resource.class);
-        when(mockFileResource.getInputStream()).thenThrow(new IOException());
+        File mockFileResource = mock(File.class);
+        when(new FileInputStream(mockFileResource)).thenThrow(new IOException());
         FilingHistoryDescriptionService filingHistoryDescriptionServiceNotFound = new FilingHistoryDescriptionService(mockFileResource, logger);
         String result = filingHistoryDescriptionServiceNotFound.getDescription("corn on the cob");
         assertEquals("", result);
