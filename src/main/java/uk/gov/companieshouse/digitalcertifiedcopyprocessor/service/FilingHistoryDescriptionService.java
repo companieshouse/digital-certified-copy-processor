@@ -1,11 +1,12 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.companieshouse.logging.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -18,14 +19,14 @@ public class FilingHistoryDescriptionService {
     private final String FILING_HISTORY_DESCRIPTION_KEY = "description";
 
     public FilingHistoryDescriptionService(
-            @Value("classpath:api-enumerations/filing_history_descriptions.yml") Resource fileResource,
+            @Value("api-enumerations/filing_history_descriptions.yml") File fileResource,
             Logger logger) {
         this.logger = logger;
         loadDescriptions(fileResource);
     }
 
-    private void loadDescriptions(Resource fileResource) {
-        try (InputStream inputStream = fileResource.getInputStream()){
+    private void loadDescriptions(final File fileResource) {
+        try (final InputStream inputStream = new FileInputStream(fileResource)){
             Yaml yaml = new Yaml();
             Map<String, Object> data = yaml.load(inputStream);
             if(data != null && data.containsKey("description") && data.get(FILING_HISTORY_DESCRIPTION_KEY) instanceof Map)
