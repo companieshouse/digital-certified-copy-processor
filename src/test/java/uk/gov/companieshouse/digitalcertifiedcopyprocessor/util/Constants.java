@@ -10,6 +10,8 @@ import java.util.Map;
 public class Constants {
 
     public static final String DOCUMENT_METADATA = "/document/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0";
+    public static final String DOCUMENT_METADATA_WITH_HOSTNAME =
+            "http://document-api-cidev.aws.chdev.org/document/-fsWaC-ED30jRNACt2dqNYc-lH2uODjjLhliYjryjV0";
 
     public static final String PUBLIC_DOCUMENT_URI =
         "https://document-api-images-cidev.s3.eu-west-2.amazonaws.com/" +

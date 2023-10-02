@@ -33,6 +33,7 @@ import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT_METADATA;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.DOCUMENT_METADATA_WITH_HOSTNAME;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.EXPECTED_PRIVATE_DOCUMENT_URI;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.EXPECTED_PUBLIC_DOCUMENT_URI;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.PUBLIC_DOCUMENT_URI;
@@ -102,6 +103,20 @@ class DocumentServiceTest {
         assertThat(publicUri, is(EXPECTED_PUBLIC_DOCUMENT_URI));
     }
 
+    @Test
+    @DisplayName("getPublicUri() gets URI successfully when document metadata contains a hostname prefix")
+    void getPublicUriGetsUriSuccessfullyWithHost() throws ApiErrorResponseException, URIValidationException {
+
+        // Given
+        givenResponseWithStatus(FOUND);
+        givenResponseContainsPublicUri(PUBLIC_DOCUMENT_URI);
+
+        // When
+        final URI publicUri = serviceUnderTest.getPublicUri(DOCUMENT_METADATA_WITH_HOSTNAME);
+
+        // Then
+        assertThat(publicUri, is(EXPECTED_PUBLIC_DOCUMENT_URI));
+    }
     @Test
     @DisplayName(
             "getPublicUri() propagates a RuntimeException from the ApiClientService wrapped as a NonRetryableException")

@@ -14,6 +14,7 @@ import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +51,24 @@ public class DocumentService {
         return privateUri;
     }
 
+    /**
+     * Because filing history returns the document metadata as a full URL including the hostname,
+     * we need to extract just the path from it.
+     */
+    private String stripHostnameFromDocumentMetadata(String documentMetadata) {
+        try {
+            URL documentURL = new URL(documentMetadata);
+            logger.debug("Stripping path " + documentURL.getPath() + " from full URL: " + documentMetadata,
+                    getLogMap(documentMetadata));
+            return documentURL.getPath();
+        } catch (Exception e) {
+            logger.info("No valid URL provided in documentMetadata, assuming only path provided.");
+        }
+        return documentMetadata;
+    }
+
     public URI getPublicUri(final String documentMetadata) {
-        final var uri = GET_DOCUMENT_CONTENT_URL.expand(documentMetadata).toString();
+        final var uri = GET_DOCUMENT_CONTENT_URL.expand(stripHostnameFromDocumentMetadata(documentMetadata)).toString();
         try {
             final var response = getDocumentContent(uri, documentMetadata);
             return getFirstLocationAsUri(response, documentMetadata);
