@@ -1,10 +1,12 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
+import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Constants {
@@ -56,15 +58,20 @@ public class Constants {
         }
     }
 
+    private static final CoverSheetDataRecord COVER_SHEET_DATA = CoverSheetDataRecord.newBuilder()
+            .setCompanyName("Test Company")
+            .setCompanyNumber("00000000")
+            .setDescription("A test filing history document")
+            .setType("AM01")
+            .build();
+
     public static final SignDigitalDocument DOCUMENT = SignDigitalDocument.newBuilder()
             .setOrderNumber("ORD-152416-079544")
             .setPrivateS3Location("s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf")
             .setDocumentType("363s")
-            .setItemGroup("ORD-152416-079544-1")
-            .setCompanyName("Test Company")
-            .setCompanyNumber("00000000")
-            .setFilingHistoryDescription("A test filing history document")
-            .setFilingHistoryType("AM01")
+            .setGroupItem("ORD-152416-079544-1")
+            .setCoverSheetData(COVER_SHEET_DATA)
+            .setFilingHistoryDescriptionValues(new HashMap<>())
             .build();
 
     public static final ItemOrderedCertifiedCopy CERTIFIED_COPY = ItemOrderedCertifiedCopy.newBuilder()

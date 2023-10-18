@@ -52,7 +52,7 @@ public class KafkaProducerService {
                 final var offset = metadata.offset();
                 logger.info("Message " + message + " delivered to topic " + signDigitalDocumentTopic
                                 + " on partition " + partition + " with offset " + offset + ".",
-                        getLogMap(message.getItemGroup(),
+                        getLogMap(message.getGroupItem(),
                                   message.getOrderNumber(),
                                   signDigitalDocumentTopic,
                                   partition,
