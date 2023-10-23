@@ -21,10 +21,10 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.ApplicationConfiguration;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.KafkaConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.MessageFlags;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentFactory;
+import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -57,15 +57,25 @@ class KafkaProducerServiceIntegrationTest {
     private static final String SIGN_DIGITAL_DOCUMENT_TOPIC = "sign-digital-document";
     private static final String FILING_HISTORY_DESCRIPTION = "**Resignation of a liquidator**";
     private static final int MESSAGE_WAIT_TIMEOUT_SECONDS = 10;
+    
+    private static final Map<String, String> FilingHistoryDescriptions =
+            Map.of("appointment_date", "2023-05-01",
+            "officer_name", "Mr Tom Sunburn");
+
+    public static final CoverSheetDataRecord coverSheetData = CoverSheetDataRecord.newBuilder()
+            .setCompanyName(CERTIFIED_COPY.getCompanyName())
+            .setCompanyNumber(CERTIFIED_COPY.getCompanyNumber())
+            .setDescription(FILING_HISTORY_DESCRIPTION)
+            .setType(CERTIFIED_COPY.getFilingHistoryType())
+            .build();
+
     private static final SignDigitalDocument EXPECTED_SIGN_DIGITAL_DOCUMENT_MESSAGE = SignDigitalDocument.newBuilder()
+            .setCoverSheetData(coverSheetData)
             .setOrderNumber(CERTIFIED_COPY.getOrderNumber())
             .setPrivateS3Location(PRIVATE_DOCUMENT_URI.toString())
             .setDocumentType("certified-copy")
-            .setItemGroup(CERTIFIED_COPY.getGroupItem())
-            .setCompanyName(CERTIFIED_COPY.getCompanyName())
-            .setCompanyNumber(CERTIFIED_COPY.getCompanyNumber())
-            .setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION)
-            .setFilingHistoryType(CERTIFIED_COPY.getFilingHistoryType())
+            .setGroupItem(CERTIFIED_COPY.getGroupItem())
+            .setFilingHistoryDescriptionValues(FilingHistoryDescriptions)
             .build();
 
     @Autowired

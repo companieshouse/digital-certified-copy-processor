@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.documentsigning.CoverSheetDataRecord;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
@@ -13,15 +14,20 @@ public class SignDigitalDocumentFactory {
 
     public SignDigitalDocument buildMessage(final ItemOrderedCertifiedCopy certifiedCopy, final URI privateUri,
                                             final String filingHistoryDescription) {
-        return SignDigitalDocument.newBuilder()
-                .setPrivateS3Location(privateUri.toString())
-                .setDocumentType(CERTIFIED_COPY_DOCUMENT_TYPE)
-                .setItemGroup(certifiedCopy.getGroupItem())
-                .setOrderNumber(certifiedCopy.getOrderNumber())
+        CoverSheetDataRecord coverSheetDataRecord = CoverSheetDataRecord.newBuilder()
                 .setCompanyName(certifiedCopy.getCompanyName())
                 .setCompanyNumber(certifiedCopy.getCompanyNumber())
-                .setFilingHistoryDescription(filingHistoryDescription)
-                .setFilingHistoryType(certifiedCopy.getFilingHistoryType())
+                .setDescription(filingHistoryDescription)
+                .setType(certifiedCopy.getFilingHistoryType())
+                .build();
+
+        return SignDigitalDocument.newBuilder()
+                .setCoverSheetData(coverSheetDataRecord)
+                .setPrivateS3Location(privateUri.toString())
+                .setDocumentType(CERTIFIED_COPY_DOCUMENT_TYPE)
+                .setGroupItem(certifiedCopy.getGroupItem())
+                .setOrderNumber(certifiedCopy.getOrderNumber())
+                .setFilingHistoryDescriptionValues(certifiedCopy.getFilingHistoryDescriptionValues())
                 .build();
     }
 }
