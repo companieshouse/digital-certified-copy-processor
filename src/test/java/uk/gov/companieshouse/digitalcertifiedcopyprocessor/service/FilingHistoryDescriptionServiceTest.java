@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FilingHistoryDescriptionServiceTest {
@@ -42,7 +39,7 @@ public class FilingHistoryDescriptionServiceTest {
     }
 
     @Test
-    @Description("When the api-enumerations does not c, we should just return an empty string")
+    @Description("When the api-enumeration does not match the key, we should just return an empty string")
     public void testGetDescriptionReturnsEmptyStringForMissingKey() {
         String descriptionKey = "wrong";
         String result = filingHistoryDescriptionService.getDescription(descriptionKey);
