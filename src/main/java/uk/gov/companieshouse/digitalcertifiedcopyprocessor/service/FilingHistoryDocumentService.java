@@ -80,14 +80,14 @@ public class FilingHistoryDocumentService {
                                                      final String filingHistoryDocumentId,
                                                      final String uri) {
         final RetryableException propagatedException;
-        final HttpStatus status = HttpStatus.valueOf(apiException.getStatusCode());
+        final var status = HttpStatus.valueOf(apiException.getStatusCode());
         if (status.is5xxServerError()) {
-            final String error = "Error sending request to "
+            final var error = "Error sending request to "
                     + client.getBasePath() + uri + ": " + apiException.getStatusMessage();
             logger.error(error, getLogMap(companyNumber, filingHistoryDocumentId, status, error));
             propagatedException = new RetryableException(error);
         } else {
-            final String error = "Error getting filing history document " + filingHistoryDocumentId +
+            final var error = "Error getting filing history document " + filingHistoryDocumentId +
                     " for company number " + companyNumber + ": " + apiException.getMessage();
             logger.error(error, getLogMap(companyNumber, filingHistoryDocumentId, status, error));
             propagatedException =  new RetryableException(error);
