@@ -16,7 +16,6 @@ import uk.gov.companieshouse.logging.util.DataMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
@@ -81,16 +80,16 @@ public class FilingHistoryDocumentService {
                                                      final String filingHistoryDocumentId,
                                                      final String uri) {
         final RetryableException propagatedException;
-        if (apiException.getStatusCode() >= INTERNAL_SERVER_ERROR.value()) {
+        final HttpStatus status = HttpStatus.valueOf(apiException.getStatusCode());
+        if (status.is5xxServerError()) {
             final String error = "Error sending request to "
                     + client.getBasePath() + uri + ": " + apiException.getStatusMessage();
-            logger.error(error, apiException,
-                    getLogMap(companyNumber, filingHistoryDocumentId, INTERNAL_SERVER_ERROR, error));
+            logger.error(error, getLogMap(companyNumber, filingHistoryDocumentId, status, error));
             propagatedException = new RetryableException(error);
         } else {
             final String error = "Error getting filing history document " + filingHistoryDocumentId +
-                    " for company number " + companyNumber + ".";
-            logger.error(error, apiException, getLogMap(companyNumber, filingHistoryDocumentId, BAD_REQUEST, error));
+                    " for company number " + companyNumber + ": " + apiException.getMessage();
+            logger.error(error, getLogMap(companyNumber, filingHistoryDocumentId, status, error));
             propagatedException =  new RetryableException(error);
         }
         return propagatedException;
