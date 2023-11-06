@@ -45,7 +45,7 @@ class FilingHistoryDocumentServiceTest {
             "Error sending request to http://host/company/00006400/filing-history/1: " + IOEXCEPTION_MESSAGE;
 
     private static final String NOT_FOUND_EXPECTED_REASON = "Error getting filing history document 1 for company number "
-            + COMPANY_NUMBER + ".";
+            + COMPANY_NUMBER + ": 404 Not Found";
 
     private static final String FILING_SOUGHT = "1";
 

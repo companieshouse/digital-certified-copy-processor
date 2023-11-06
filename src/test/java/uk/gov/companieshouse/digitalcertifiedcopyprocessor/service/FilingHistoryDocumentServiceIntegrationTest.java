@@ -161,7 +161,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
                 assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(UNKNOWN_COMPANY_NUMBER, ID_1));
         final String expectedReason = "Error getting filing history document " + ID_1 +
-                " for company number " + UNKNOWN_COMPANY_NUMBER + ".";
+                " for company number " + UNKNOWN_COMPANY_NUMBER +
+            ": 400 Bad Request\n{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
         assertThat(exception.getMessage(), Is.is(expectedReason));
     }
 
@@ -180,7 +181,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
                 assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, UNKNOWN_ID));
         final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
-                " for company number " + COMPANY_NUMBER + ".";
+                " for company number " + COMPANY_NUMBER +
+            ": 400 Bad Request\n{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
         assertThat(exception.getMessage(), is(expectedReason));
     }
 
