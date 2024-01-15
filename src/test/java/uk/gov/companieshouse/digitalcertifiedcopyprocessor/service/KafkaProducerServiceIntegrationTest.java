@@ -75,6 +75,7 @@ class KafkaProducerServiceIntegrationTest {
             .setPrivateS3Location(PRIVATE_DOCUMENT_URI.toString())
             .setDocumentType("certified-copy")
             .setGroupItem(CERTIFIED_COPY.getGroupItem())
+            .setItemId(CERTIFIED_COPY.getItemId())
             .setFilingHistoryDescriptionValues(FilingHistoryDescriptions)
             .build();
 
