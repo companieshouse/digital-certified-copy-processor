@@ -26,6 +26,7 @@ public class SignDigitalDocumentFactory {
                 .setPrivateS3Location(privateUri.toString())
                 .setDocumentType(CERTIFIED_COPY_DOCUMENT_TYPE)
                 .setGroupItem(certifiedCopy.getGroupItem())
+                .setItemId(certifiedCopy.getItemId())
                 .setOrderNumber(certifiedCopy.getOrderNumber())
                 .setFilingHistoryDescriptionValues(certifiedCopy.getFilingHistoryDescriptionValues())
                 .build();
