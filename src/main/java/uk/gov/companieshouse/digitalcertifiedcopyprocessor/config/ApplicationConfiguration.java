@@ -24,7 +24,7 @@ import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.util.Map;
 
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.NAMESPACE;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.APPLICATION_NAME_SPACE;
 
 @Configuration
 @EnableKafka
@@ -93,6 +93,6 @@ public class ApplicationConfiguration {
 
     @Bean
     Logger getLogger() {
-        return LoggerFactory.getLogger(NAMESPACE);
+        return LoggerFactory.getLogger(APPLICATION_NAME_SPACE);
     }
 }

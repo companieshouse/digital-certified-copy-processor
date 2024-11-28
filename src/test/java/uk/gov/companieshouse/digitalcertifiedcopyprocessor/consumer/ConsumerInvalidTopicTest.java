@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -27,12 +27,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 
-@SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@SpringBootTest
 @EmbeddedKafka(
         topics = {"echo", "echo-retry", "echo-error", "echo-invalid"},
-        controlledShutdown = true,
-        partitions = 1
+        controlledShutdown = true
 )
 @TestPropertySource(locations = "classpath:application-test_main_nonretryable.yml")
 @Import(TestConfig.class)
@@ -62,7 +60,7 @@ class ConsumerInvalidTopicTest {
                         "key",
                         CERTIFIED_COPY));
         future.get();
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.of(10000L, ChronoUnit.MILLIS), 2);
 
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));

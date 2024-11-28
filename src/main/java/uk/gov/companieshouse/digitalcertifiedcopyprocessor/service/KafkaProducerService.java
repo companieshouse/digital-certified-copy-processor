@@ -44,28 +44,8 @@ public class KafkaProducerService {
 
         final var message = signDigitalDocumentFactory.buildMessage(certifiedCopy, privateUri, filingHistoryDescription);
         final var future = kafkaTemplate.send(signDigitalDocumentTopic, message);
-        future.addCallback(new ListenableFutureCallback<>() {
-            @Override
-            public void onSuccess(SendResult<String, SignDigitalDocument> result) {
-                final var metadata =  result.getRecordMetadata();
-                final var partition = metadata.partition();
-                final var offset = metadata.offset();
-                logger.info("Message " + message + " delivered to topic " + signDigitalDocumentTopic
-                                + " on partition " + partition + " with offset " + offset + ".",
-                        getLogMap(message.getGroupItem(),
-                                  message.getOrderNumber(),
-                                  signDigitalDocumentTopic,
-                                  partition,
-                                  offset));
-            }
 
-            @Override
-            public void onFailure(Throwable ex) {
-                logger.error("Unable to deliver message " + message + ". Error: " + ex.getMessage() + ".",
-                        getLogMap(ex.getMessage()));
-            }
-
-        });
+        future.whenComplete(new KafkaProducerCallback(logger, signDigitalDocumentTopic, message));
     }
 
     private static Map<String, Object> getLogMap(final String itemId, final String orderNumber) {
