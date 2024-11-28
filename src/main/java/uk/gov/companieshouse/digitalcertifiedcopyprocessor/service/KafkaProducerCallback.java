@@ -50,14 +50,6 @@ public class KafkaProducerCallback implements BiConsumer<SendResult<String, Sign
         }
     }
 
-    private static Map<String, Object> getLogMap(final String itemId, final String orderNumber) {
-        return new DataMap.Builder()
-                .itemId(itemId)
-                .orderId(orderNumber)
-                .build()
-                .getLogMap();
-    }
-
     private static Map<String, Object> getLogMap(final String groupItem,
                                                  final String orderNumber,
                                                  final String topic,

@@ -10,7 +10,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocumentAvroSerializer;
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
-import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +34,6 @@ public class KafkaConfig {
             @Value("${spring.kafka.bootstrap-servers}" ) final String bootstrapServers) {
         return new KafkaTemplate<>(signProducerFactory(bootstrapServers));
     }
-
-    /**@Bean
-    public KafkaTemplate<String, ItemOrderedCertifiedCopy> defaultRetryTopicKafkaTemplate(
-            ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }**/
 
     @Bean
     public SignDigitalDocumentAvroSerializer avroSerializer() {

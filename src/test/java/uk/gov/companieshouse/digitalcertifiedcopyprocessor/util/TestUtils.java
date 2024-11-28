@@ -2,27 +2,12 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.util;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.springframework.core.env.Environment;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
-import uk.gov.companieshouse.itemgroupprocessed.ItemGroupProcessed;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestUtils {
-
-    public static final String MAIN_TOPIC = "echo";
-    public static final String RETRY_TOPIC = "echo-retry";
-    public static final String ERROR_TOPIC = "echo-error";
-    public static final String INVALID_TOPIC = "echo-invalid";
 
     /**
      * Configures the CH Java SDKs used in WireMock based integration tests to interact with WireMock
@@ -75,28 +60,4 @@ public class TestUtils {
         }
         return count;
     }
-
-    /**public static ConsumerRecords<?, ?> setUpSendAndWaitForMessage(final Environment environment,
-                                                                   final KafkaConsumer<String, ItemGroupProcessed> testConsumer,
-                                                                   final KafkaProducer<String, ItemGroupProcessed> testProducer,
-                                                                   final CountDownLatch latch) throws Exception {
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
-        withEnvironmentVariable("API_URL", "http://localhost:" + wireMockPort)
-                .and("CHS_API_KEY", "Token value")
-                .and("PAYMENTS_API_URL", "NOT-USED")
-                .and("DOCUMENT_API_LOCAL_URL", "NOT-USED")
-                .execute(() -> sendAndWaitForMessage(testProducer, latch));
-        return KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 6);
-    }
-
-    private static void sendAndWaitForMessage(
-            final KafkaProducer<String, ItemGroupProcessed> testProducer, final CountDownLatch latch)
-            throws InterruptedException {
-        testProducer.send(new ProducerRecord<>(MAIN_TOPIC, 0, System.currentTimeMillis(), "key",
-                TestConstants.ITEM_GROUP_PROCESSED));
-        if (!latch.await(30L, TimeUnit.SECONDS)) {
-            fail("Timed out waiting for latch");
-        }
-    }**/
-
 }

@@ -34,7 +34,7 @@ public class EnvironmentVariablesChecker {
     }
 
     /**
-     * Method to check if all of the required configuration variables
+     * Method to check if all the required configuration variables
      * defined in the RequiredEnvironmentVariables enum have been set to a value
      * @return <code>true</code> if all required environment variables have been set, <code>false</code> otherwise
      */

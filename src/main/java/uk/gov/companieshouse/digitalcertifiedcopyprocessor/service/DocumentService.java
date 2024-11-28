@@ -14,7 +14,6 @@ import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class DocumentService {
      */
     private String stripHostnameFromDocumentMetadata(String documentMetadata) {
         try {
-            URL documentURL = new URL(documentMetadata);
+            URI documentURL = new URI(documentMetadata);
             logger.debug("Stripping path " + documentURL.getPath() + " from full URL: " + documentMetadata,
                     getLogMap(documentMetadata));
             return documentURL.getPath();
@@ -110,10 +109,10 @@ public class DocumentService {
             throw new NonRetryableException(error);
         }
         try {
-            return new URI(locations.get(0));
+            return new URI(locations.getFirst());
         } catch (URISyntaxException ex) {
             // Should this happen (unlikely), it would likely not be a recoverable issue.
-            final var error = "Invalid URI `" + locations.get(0) + "` obtained from Location header.";
+            final var error = "Invalid URI `" + locations.getFirst() + "` obtained from Location header.";
             logger.error(error, ex, getLogMap(documentMetadata));
             throw new NonRetryableException(error, ex);
         }
