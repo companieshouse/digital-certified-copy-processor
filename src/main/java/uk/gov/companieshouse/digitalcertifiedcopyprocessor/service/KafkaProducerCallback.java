@@ -30,10 +30,7 @@ public class KafkaProducerCallback implements BiConsumer<SendResult<String, Sign
         logger.info("Message " + message + " delivered to topic " + signDigitalDocumentTopic
                         + " on partition " + partition + " with offset " + offset + ".",
                 getLogMap(message.getGroupItem(),
-                        message.getOrderNumber(),
-                        signDigitalDocumentTopic,
-                        partition,
-                        offset));
+                        message.getOrderNumber()));
     }
 
     public void onFailure(Throwable ex) {
@@ -50,17 +47,10 @@ public class KafkaProducerCallback implements BiConsumer<SendResult<String, Sign
         }
     }
 
-    private static Map<String, Object> getLogMap(final String groupItem,
-                                                 final String orderNumber,
-                                                 final String topic,
-                                                 final int partition,
-                                                 final long offset) {
+    public static Map<String, Object> getLogMap(final String itemId, final String orderNumber) {
         return new DataMap.Builder()
-                .groupItem(groupItem)
+                .itemId(itemId)
                 .orderId(orderNumber)
-                .topic(topic)
-                .partition(partition)
-                .offset(offset)
                 .build()
                 .getLogMap();
     }

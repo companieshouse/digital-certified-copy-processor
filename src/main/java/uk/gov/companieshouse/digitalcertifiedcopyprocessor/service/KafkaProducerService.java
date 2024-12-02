@@ -7,11 +7,10 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.kafka.SignDigitalDocu
 import uk.gov.companieshouse.documentsigning.SignDigitalDocument;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.util.DataMap;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
+
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaProducerCallback.getLogMap;
 
 @Service
 public class KafkaProducerService {
@@ -44,36 +43,6 @@ public class KafkaProducerService {
         final var future = kafkaTemplate.send(signDigitalDocumentTopic, message);
 
         future.whenComplete(new KafkaProducerCallback(logger, signDigitalDocumentTopic, message));
-    }
-
-    private static Map<String, Object> getLogMap(final String itemId, final String orderNumber) {
-        return new DataMap.Builder()
-                .itemId(itemId)
-                .orderId(orderNumber)
-                .build()
-                .getLogMap();
-    }
-
-    private static Map<String, Object> getLogMap(final String groupItem,
-                                                 final String orderNumber,
-                                                 final String topic,
-                                                 final int partition,
-                                                 final long offset) {
-        return new DataMap.Builder()
-                .groupItem(groupItem)
-                .orderId(orderNumber)
-                .topic(topic)
-                .partition(partition)
-                .offset(offset)
-                .build()
-                .getLogMap();
-    }
-
-    private static Map<String, Object> getLogMap(final String error) {
-        return new DataMap.Builder()
-                .errors(Collections.singletonList(error))
-                .build()
-                .getLogMap();
     }
 
 }
