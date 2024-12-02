@@ -21,21 +21,17 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
+        <avro.version>1.12.0</avro.version>
         <handlebars.version>4.4.0</handlebars.version>
         <!-- Docker plugin -->
-        <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
-
-        <!-- log4j -->
-        <log4j.version>2.24.1</log4j.version>
+        <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <mockito-core.version>5.14.2</mockito-core.version>
         <re2j.version>1.7</re2j.version>
         <snakeyaml.version>2.3</snakeyaml.version>
         <software.amazon.awssdk.version>2.29.15</software.amazon.awssdk.version>
-
         <!-- Sonar -->
         <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
-
         <!-- Spring boot config -->
         <spring-boot-dependencies.version>3.4.0</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.4.0</spring-boot-maven-plugin.version>
@@ -45,7 +41,7 @@
         <!-- system-rules: 1.17.2 is the latest version that works with JUnit 5.
              See https://github.com/stefanbirkner/system-rules/issues/70 -->
         <system-rules.version>1.17.2</system-rules.version>
-        <testcontainers.version>1.20.0</testcontainers.version>
+        <testcontainers.version>1.20.4</testcontainers.version>
 
         <!-- Internal Dependencies -->
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
@@ -68,15 +64,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot-dependencies.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- log4j -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>${log4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -109,6 +96,12 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -128,6 +121,22 @@
             <artifactId>kafka-models</artifactId>
             <version>${kafka-models.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-webapp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.http2</groupId>
+                    <artifactId>http2-server</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
         </dependency>
 
         <dependency>
