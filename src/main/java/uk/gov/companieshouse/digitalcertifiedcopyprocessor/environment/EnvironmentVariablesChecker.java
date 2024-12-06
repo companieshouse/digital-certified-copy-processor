@@ -6,11 +6,11 @@ import uk.gov.companieshouse.environment.impl.EnvironmentReaderImpl;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.NAMESPACE;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.APPLICATION_NAME_SPACE;
 
 public class EnvironmentVariablesChecker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAME_SPACE);
 
     public enum RequiredEnvironmentVariables {
         API_URL("API_URL"),
@@ -34,7 +34,7 @@ public class EnvironmentVariablesChecker {
     }
 
     /**
-     * Method to check if all of the required configuration variables
+     * Method to check if all the required configuration variables
      * defined in the RequiredEnvironmentVariables enum have been set to a value
      * @return <code>true</code> if all required environment variables have been set, <code>false</code> otherwise
      */

@@ -7,20 +7,15 @@ import java.util.Objects;
 /**
  * Contains all parameters required by {@link KafkaService service implementations}.
  */
-public class KafkaServiceParameters {
-
-    private final ItemOrderedCertifiedCopy data;
-
-    public KafkaServiceParameters(ItemOrderedCertifiedCopy data) {
-        this.data = data;
-    }
+public record KafkaServiceParameters(ItemOrderedCertifiedCopy data) {
 
     /**
      * Get data attached to the ServiceParameters object.
      *
      * @return A string representing data that has been attached to the ServiceParameters object.
      */
-    public ItemOrderedCertifiedCopy getData() {
+    @Override
+    public ItemOrderedCertifiedCopy data() {
         return data;
     }
 
@@ -29,15 +24,14 @@ public class KafkaServiceParameters {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof KafkaServiceParameters)) {
+        if (!(o instanceof KafkaServiceParameters that)) {
             return false;
         }
-        KafkaServiceParameters that = (KafkaServiceParameters) o;
-        return Objects.equals(getData(), that.getData());
+        return Objects.equals(data(), that.data());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getData());
+        return Objects.hash(data());
     }
 }

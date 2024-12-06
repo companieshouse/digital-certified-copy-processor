@@ -12,7 +12,6 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.converter.PublicToPri
 import uk.gov.companieshouse.logging.Logger;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 
 import static java.lang.System.getenv;

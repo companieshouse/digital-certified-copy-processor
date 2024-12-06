@@ -8,7 +8,7 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.En
 @SpringBootApplication
 public class DigitalCertifiedCopyProcessorApplication {
 
-    public static final String NAMESPACE = "digital-certified-copy-processor";
+    public static final String APPLICATION_NAME_SPACE = "digital-certified-copy-processor";
 
     public static void main(String[] args) {
         if (allRequiredEnvironmentVariablesPresent()) {
