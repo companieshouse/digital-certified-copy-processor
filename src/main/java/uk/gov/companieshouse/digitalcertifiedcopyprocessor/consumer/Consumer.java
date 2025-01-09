@@ -45,7 +45,8 @@ public class Consumer {
             dltTopicSuffix = "-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
             sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC,
-            include = RetryableException.class
+            include = RetryableException.class,
+            kafkaTemplate = "kafkaTemplate"
     )
     public void consume(Message<ItemOrderedCertifiedCopy> message) {
         try {
