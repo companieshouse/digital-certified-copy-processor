@@ -2,7 +2,8 @@ package uk.gov.companieshouse.digitalcertifiedcopyprocessor.config;
 
 import consumer.deserialization.AvroDeserializer;
 import consumer.serialization.AvroSerializer;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
@@ -34,7 +37,7 @@ public class TestConfig {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        final var httpClient = HttpClients.custom().disableRedirectHandling().build();
+        final HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
         final var requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
         return builder.requestFactory(() -> requestFactory).build();
     }
@@ -74,6 +77,12 @@ public class TestConfig {
                         throw new RuntimeException(e);
                     }
                 });
+    }
+
+    @Bean
+    public KafkaTemplate<String, ItemOrderedCertifiedCopy> defaultRetryTopicKafkaTemplate(
+            ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 
 }

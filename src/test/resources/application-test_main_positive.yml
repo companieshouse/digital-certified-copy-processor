@@ -5,7 +5,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   kafka:
-    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    bootstrap-servers: localhost:9092
 
 consumer:
   topic: echo
@@ -25,5 +25,11 @@ invalid_message_topic: echo-invalid
 
 logger:
   namespace: archetype-client
+
+logging:
+  level:
+    org:
+      springframework:
+        kafka: DEBUG
 
 steps: 1

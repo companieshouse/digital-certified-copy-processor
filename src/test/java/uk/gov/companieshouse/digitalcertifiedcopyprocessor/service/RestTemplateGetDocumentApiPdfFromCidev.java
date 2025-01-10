@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.regions.Region;
@@ -73,13 +73,13 @@ class RestTemplateGetDocumentApiPdfFromCidev {
     @Autowired
     private S3Client restTemplates3Client;
 
-    @MockBean
+    @MockitoBean
     private KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
-    @MockBean
+    @MockitoBean
     private KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
-    @MockBean
+    @MockitoBean
     private ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
-    @MockBean
+    @MockitoBean
     private ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
 
     @Configuration

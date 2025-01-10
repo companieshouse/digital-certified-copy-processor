@@ -7,12 +7,11 @@ import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.consumer.Consumer;
@@ -35,7 +34,6 @@ import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.En
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.MAX_ATTEMPTS;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.CONCURRENT_LISTENER_INSTANCES;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.ITEM_ORDERED_CERTIFIED_COPY_TOPIC;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.BOOTSTRAP_SERVER_URL;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.environment.EnvironmentVariablesChecker.RequiredEnvironmentVariables.SIGN_DIGITAL_DOCUMENT_TOPIC;
 
 @SpringBootTest
@@ -45,16 +43,15 @@ class EnvironmentVariablesCheckerTest {
 
     private static final String TOKEN_VALUE = "token value";
 
-    @MockBean
+    @MockitoBean
     KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
-    @MockBean
+    @MockitoBean
     KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
-    @MockBean
+    @MockitoBean
     ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
-    @MockBean
+    @MockitoBean
     ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
-
-    @MockBean
+    @MockitoBean
     Consumer consumer;
 
     @Rule

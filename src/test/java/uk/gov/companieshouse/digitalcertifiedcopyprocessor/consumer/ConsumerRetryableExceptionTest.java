@@ -7,15 +7,13 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.config.TestConfig;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.exception.RetryableException;
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaService;
@@ -23,6 +21,8 @@ import uk.gov.companieshouse.digitalcertifiedcopyprocessor.service.KafkaServiceP
 import uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils;
 import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -35,12 +35,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 
-@SpringBootTest(classes = DigitalCertifiedCopyProcessorApplication.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@SpringBootTest
 @EmbeddedKafka(
         topics = {"echo", "echo-retry", "echo-error", "echo-invalid"},
-        controlledShutdown = true,
-        partitions = 1
+        controlledShutdown = true
 )
 @TestPropertySource(locations = "classpath:application-test_main_retryable.yml")
 @Import(TestConfig.class)
@@ -59,7 +57,7 @@ class ConsumerRetryableExceptionTest {
     @Autowired
     private CountDownLatch latch;
 
-    @MockBean
+    @MockitoBean
     private KafkaService service;
 
     @Test
@@ -76,7 +74,7 @@ class ConsumerRetryableExceptionTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.of(10000L, ChronoUnit.MILLIS), 6);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-retry"), is(3));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-error"), is(1));

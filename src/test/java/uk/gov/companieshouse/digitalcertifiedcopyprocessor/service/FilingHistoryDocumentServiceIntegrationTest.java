@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.tomakehurst.wiremock.http.Fault;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.hamcrest.core.Is;
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingLinks;
@@ -47,7 +46,8 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.NAMESPACE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication.APPLICATION_NAME_SPACE;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.TestUtils.givenSdkIsConfigured;
 
 
@@ -65,13 +65,13 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @Rule
     public EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-    @MockBean
+    @MockitoBean
     KafkaConsumer<String, ItemOrderedCertifiedCopy> testConsumer;
-    @MockBean
+    @MockitoBean
     KafkaProducer<String, ItemOrderedCertifiedCopy> testProducer;
-    @MockBean
+    @MockitoBean
     ProducerFactory<String, ItemOrderedCertifiedCopy> producerFactory;
-    @MockBean
+    @MockitoBean
     ConsumerFactory<String, ItemOrderedCertifiedCopy> consumerFactory;
 
     private static final String COMPANY_NUMBER = "00006400";
@@ -104,7 +104,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
 
         @Bean
         Logger getLogger() {
-            return LoggerFactory.getLogger(NAMESPACE);
+            return LoggerFactory.getLogger(APPLICATION_NAME_SPACE);
         }
     }
 
@@ -138,8 +138,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
                         .withBody(getFilingHistoryResponsePayload())));
 
         // When
-        final String metadata =
-                serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, ID_1);
+        final String metadata = serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, ID_1);
 
         // Then
         assertThat(metadata, is(DOCUMENT_METADATA));
@@ -160,10 +159,13 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final RetryableException exception =
                 assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(UNKNOWN_COMPANY_NUMBER, ID_1));
+
         final String expectedReason = "Error getting filing history document " + ID_1 +
-                " for company number " + UNKNOWN_COMPANY_NUMBER +
-            ": 400 Bad Request\n{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
-        assertThat(exception.getMessage(), Is.is(expectedReason));
+                " for company number " + UNKNOWN_COMPANY_NUMBER + ": 400 Bad Request";
+        final String expectedReasonMap = "{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
+
+        assertTrue(exception.getMessage().contains(expectedReason));
+        assertTrue(exception.getMessage().contains(expectedReasonMap));
     }
 
     @Test
@@ -181,9 +183,11 @@ class FilingHistoryDocumentServiceIntegrationTest {
                 assertThrows(RetryableException.class,
                         () -> serviceUnderTest.getDocumentMetadata(COMPANY_NUMBER, UNKNOWN_ID));
         final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
-                " for company number " + COMPANY_NUMBER +
-            ": 400 Bad Request\n{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
-        assertThat(exception.getMessage(), is(expectedReason));
+                " for company number " + COMPANY_NUMBER + ": 400 Bad Request";
+        final String expectedReasonMap = "{\"errors\":[{\"type\":\"ch:service\",\"error\":\"filing-history-item-not-found\"}]}";
+
+        assertTrue(exception.getMessage().contains(expectedReason));
+        assertTrue(exception.getMessage().contains(expectedReasonMap));
     }
 
     @Test

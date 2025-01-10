@@ -10,8 +10,10 @@ import uk.gov.companieshouse.itemorderedcertifiedcopy.ItemOrderedCertifiedCopy;
 
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.digitalcertifiedcopyprocessor.util.Constants.CERTIFIED_COPY;
 

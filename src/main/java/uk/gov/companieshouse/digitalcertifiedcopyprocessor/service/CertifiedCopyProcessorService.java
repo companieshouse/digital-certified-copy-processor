@@ -30,7 +30,7 @@ class CertifiedCopyProcessorService implements KafkaService {
     @Override
     public void processMessage(KafkaServiceParameters parameters) {
 
-        final var certifiedCopy = parameters.getData();
+        final var certifiedCopy = parameters.data();
 
         final var documentMetadata = filingHistoryDocumentService.getDocumentMetadata(
                 certifiedCopy.getCompanyNumber(),
