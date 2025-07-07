@@ -4,4 +4,4 @@
 #
 PORT=8080
 
-exec java -jar -Dserver.port="${PORT}" "digital-certified-copy-processor.jar"
+exec java -jar -Dserver.port="${PORT}" -XX:MaxRAMPercentage=80 "digital-certified-copy-processor.jar"
