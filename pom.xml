@@ -50,6 +50,7 @@
         <structured-logging.version>3.0.36</structured-logging.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <opentelemetry-version>2.14.0</opentelemetry-version>
 
         <start-class>uk.gov.companieshouse.digitalcertifiedcopyprocessor.DigitalCertifiedCopyProcessorApplication</start-class>
 
@@ -58,10 +59,24 @@
             --add-opens java.base/java.lang=ALL-UNNAMED
         </argLine>
 
+        <!--  Sonar -->
+        <sonar.projectName>digital-certified-copy-processor</sonar.projectName>
+        <sonar.projectKey>uk.gov.companieshouse:digital-certified-copy-processor</sonar.projectKey>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
+
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${opentelemetry-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -303,6 +318,10 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 
