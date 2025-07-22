@@ -22,6 +22,7 @@ public class TestUtils {
         variables.set("API_URL", "http://localhost:" + wireMockPort);
         variables.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
         variables.set("DOCUMENT_API_LOCAL_URL", "http://localhost:" + wireMockPort);
+        variables.set("ORACLE_QUERY_API_URL", "undefined");
         return wireMockPort;
     }
 
