@@ -32,6 +32,9 @@
         <software.amazon.awssdk.version>2.29.15</software.amazon.awssdk.version>
         <!-- Sonar -->
         <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
+        <sonar.projectName>digital-certified-copy-processor</sonar.projectName>
+        <sonar.projectKey>uk.gov.companieshouse:digital-certified-copy-processor</sonar.projectKey>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
         <sonar.login></sonar.login>
         <sonar.password></sonar.password>
         <!-- Spring boot config -->
