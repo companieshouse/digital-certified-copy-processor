@@ -32,6 +32,8 @@
         <software.amazon.awssdk.version>2.29.15</software.amazon.awssdk.version>
         <!-- Sonar -->
         <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
         <!-- Spring boot config -->
         <spring-boot-dependencies.version>3.4.1</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.4.1</spring-boot-maven-plugin.version>
