@@ -23,6 +23,8 @@
 
         <avro.version>1.12.1</avro.version>
         <handlebars.version>4.4.0</handlebars.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
+        <jetty-server.version>12.1.6</jetty-server.version>
         <!-- Docker plugin -->
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
@@ -33,7 +35,7 @@
         <!-- Sonar -->
         <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
         <!-- Spring boot config -->
-        <spring-boot-dependencies.version>3.5.10</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.5.11</spring-boot-dependencies.version>
         <spring-boot-maven-plugin.version>3.5.10</spring-boot-maven-plugin.version>
 
         <spring-cloud-contract-wiremock.version>4.3.0</spring-cloud-contract-wiremock.version>
@@ -109,6 +111,13 @@
     </dependencyManagement>
 
     <dependencies>
+
+    	<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj-core.version}</version>
+			<scope>test</scope>
+		</dependency>
 
         <!-- Transitive dependencies -->
         <dependency>
